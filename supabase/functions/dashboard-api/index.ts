@@ -158,6 +158,10 @@ async function authenticateDashboard(
     await maybeBootstrapDashboardUser(admin, data.user)
     context = await readDashboardContext(admin, data.user)
   }
+  if (!context && !(await hasDashboardMembership(admin, data.user))) {
+    await provisionDashboardTenant(admin, data.user)
+    context = await readDashboardContext(admin, data.user)
+  }
   if (!context) {
     throw new ApiError(403, 'no_dashboard_access', 'This user is not mapped to a tenant')
   }
@@ -202,6 +206,19 @@ async function readDashboardContext(admin: any, user: any): Promise<DashboardCon
   }
 }
 
+async function hasDashboardMembership(admin: any, user: any): Promise<boolean> {
+  const { count, error } = await admin
+    .from('tenant_dashboard_users')
+    .select('tenant_id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  if (error) {
+    if (error.code === '42P01') return false
+    throw error
+  }
+  return (count ?? 0) > 0
+}
+
 async function maybeBootstrapDashboardUser(admin: any, user: any): Promise<void> {
   const tenantId = (Deno.env.get('DASHBOARD_BOOTSTRAP_TENANT_ID') ?? '').trim()
   const allowedEmails = new Set(
@@ -221,6 +238,66 @@ async function maybeBootstrapDashboardUser(admin: any, user: any): Promise<void>
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id,tenant_id' })
   if (error) throw error
+}
+
+async function provisionDashboardTenant(admin: any, user: any): Promise<void> {
+  const userId = String(user.id ?? '').trim()
+  if (!userId) return
+
+  const email = String(user.email ?? '').trim().toLowerCase()
+  const tenantId = `ten_${(await sha256Hex(`dashboard:${userId}`)).slice(0, 24)}`
+  const now = new Date().toISOString()
+  const metadata: Record<string, unknown> = {
+    onboarding_source: 'dashboard_self_signup',
+    account_kyc_status: 'not_started',
+    dashboard_user_id: userId,
+  }
+  if (email) metadata.dashboard_email_hash = await sha256Hex(email)
+
+  const { error: tenantError } = await admin.from('tenants').upsert({
+    id: tenantId,
+    name: dashboardTenantName(user),
+    status: 'sandbox',
+    environment: 'sandbox',
+    kyb_status: 'not_submitted',
+    risk_tier: 'sandbox',
+    metadata,
+    updated_at: now,
+  }, { onConflict: 'id' })
+  if (tenantError) throw tenantError
+
+  const { error: membershipError } = await admin.from('tenant_dashboard_users').upsert({
+    user_id: userId,
+    tenant_id: tenantId,
+    role: 'owner',
+    status: 'active',
+    updated_at: now,
+  }, { onConflict: 'user_id,tenant_id' })
+  if (membershipError) throw membershipError
+
+  const { error: providerError } = await admin.from('tenant_provider_configs').upsert({
+    tenant_id: tenantId,
+    provider: 'mock',
+    status: 'sandbox',
+    approval_status: 'approved',
+    metadata: { purpose: 'developer sandbox' },
+    updated_at: now,
+  }, { onConflict: 'tenant_id,provider' })
+  if (providerError) throw providerError
+
+  const { error: auditError } = await admin.from('audit_events').insert({
+    tenant_id: tenantId,
+    actor_type: 'dashboard_user',
+    actor_id: userId,
+    action: 'dashboard.tenant_auto_provisioned',
+    resource_type: 'tenant',
+    resource_id: tenantId,
+    details: {
+      onboarding_source: 'dashboard_self_signup',
+      email_present: Boolean(email),
+    },
+  })
+  if (auditError) console.error('[dashboard-api] auto-provision audit failed', auditError)
 }
 
 async function dashboardStatus(admin: any, context: DashboardContext): Promise<Record<string, unknown>> {
@@ -566,6 +643,16 @@ function readIpAllowlist(value: unknown): string[] {
 function optionalString(value: unknown, fallback: string, max: number): string {
   if (value === undefined || value === null || value === '') return fallback
   return requireString(value, 'name', { max })
+}
+
+function dashboardTenantName(user: any): string {
+  const metadata = objectValue(user.user_metadata)
+  const rawName = metadata.company_name
+    ?? metadata.full_name
+    ?? metadata.name
+    ?? 'Developer Sandbox'
+  const name = String(rawName).trim().replace(/\s+/g, ' ')
+  return name.slice(0, 80) || 'Developer Sandbox'
 }
 
 function objectValue(value: unknown): Record<string, any> {
