@@ -1,0 +1,6 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Universa">
+  <rect width="128" height="128" rx="64" fill="#07140F"/>
+  <path d="M32 34H48V75.5C48 87.2 54.1 94 64 94C73.9 94 80 87.2 80 75.5V34H96V76.8C96 99.2 83.3 110 64 110C44.7 110 32 99.2 32 76.8V34Z" fill="#AEE7FF"/>
+  <path d="M40 22H88C93.5 22 98 26.5 98 32V32C98 37.5 93.5 42 88 42H40C34.5 42 30 37.5 30 32V32C30 26.5 34.5 22 40 22Z" fill="white"/>
+  <path d="M53 32H75" stroke="#07140F" stroke-width="6" stroke-linecap="round"/>
+</svg>

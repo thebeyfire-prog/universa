@@ -1,0 +1,16 @@
+{
+  "name": "universa-developer-rewards-vault",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --loader ./node_modules/ts-node/esm.mjs ./node_modules/mocha/bin/mocha -t 1000000 tests/**/*.ts"
+  },
+  "devDependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@solana/spl-token": "^0.4.14",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.10.1",
+    "ts-mocha": "^11.1.0",
+    "typescript": "^5.9.3"
+  }
+}

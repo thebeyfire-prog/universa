@@ -1,0 +1,16 @@
+{
+  "name": "universa-token-launch",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dry-run": "node launch-dbc.mjs",
+    "launch": "node launch-dbc.mjs --execute"
+  },
+  "dependencies": {
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.10",
+    "@solana/spl-token": "0.4.14",
+    "@solana/web3.js": "1.98.4",
+    "bn.js": "5.2.2",
+    "bs58": "6.0.0"
+  }
+}

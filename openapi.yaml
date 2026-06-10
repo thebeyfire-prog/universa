@@ -1,0 +1,214 @@
+openapi: 3.1.0
+info:
+  title: Universa API
+  version: 0.1.0
+  description: Tenant-scoped API for KYC-gated fiat and stablecoin money movement.
+servers:
+  - url: https://pvuoslgpooqdvedynjok.supabase.co/functions/v1/platform-api
+    description: Development sandbox
+security:
+  - UniversaKey: []
+    UniversaTimestamp: []
+    UniversaNonce: []
+    UniversaSignature: []
+paths:
+  /v1/customers:
+    post:
+      summary: Create a customer
+      operationId: createCustomer
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCustomer"
+      responses:
+        "201":
+          description: Customer created
+  /v1/customers/{customerId}:
+    get:
+      summary: Get a customer
+      operationId: getCustomer
+      parameters:
+        - $ref: "#/components/parameters/CustomerId"
+      responses:
+        "200":
+          description: Customer returned
+  /v1/customers/{customerId}/kyc-sessions:
+    post:
+      summary: Create a hosted KYC session
+      operationId: createKycSession
+      parameters:
+        - $ref: "#/components/parameters/CustomerId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "201":
+          description: KYC session created
+  /v1/customers/{customerId}/virtual-accounts:
+    get:
+      summary: List customer virtual accounts
+      operationId: listVirtualAccounts
+      parameters:
+        - $ref: "#/components/parameters/CustomerId"
+      responses:
+        "200":
+          description: Virtual accounts returned
+    post:
+      summary: Create a virtual account
+      operationId: createVirtualAccount
+      parameters:
+        - $ref: "#/components/parameters/CustomerId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [source_currency, destination]
+              properties:
+                source_currency:
+                  type: string
+                  example: usd
+                destination:
+                  $ref: "#/components/schemas/Route"
+      responses:
+        "201":
+          description: Virtual account created
+  /v1/quotes:
+    post:
+      summary: Create a fee-inclusive route quote
+      operationId: createQuote
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, kind, amount, source, destination]
+              properties:
+                customer_id:
+                  type: string
+                kind:
+                  type: string
+                  enum: [onramp, offramp]
+                amount:
+                  type: string
+                  pattern: '^\d+(\.\d{1,2})?$'
+                tenant_fee_bps:
+                  type: integer
+                  minimum: 0
+                  maximum: 300
+                  default: 0
+                  description: Optional tenant markup in basis points, added on top of the Universa base fee.
+                source:
+                  $ref: "#/components/schemas/Route"
+                destination:
+                  $ref: "#/components/schemas/Route"
+      responses:
+        "201":
+          description: Quote created
+  /v1/transfers:
+    post:
+      summary: Execute a quoted transfer
+      operationId: createTransfer
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quote_id, source, destination]
+              properties:
+                quote_id:
+                  type: string
+                external_id:
+                  type: string
+                source:
+                  $ref: "#/components/schemas/Route"
+                destination:
+                  $ref: "#/components/schemas/Route"
+      responses:
+        "201":
+          description: Transfer created
+  /v1/transfers/{transferId}:
+    get:
+      summary: Get a transfer
+      operationId: getTransfer
+      parameters:
+        - name: transferId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transfer returned
+components:
+  securitySchemes:
+    UniversaKey:
+      type: apiKey
+      in: header
+      name: X-Universa-Api-Key
+    UniversaTimestamp:
+      type: apiKey
+      in: header
+      name: X-Universa-Timestamp
+    UniversaNonce:
+      type: apiKey
+      in: header
+      name: X-Universa-Nonce
+    UniversaSignature:
+      type: apiKey
+      in: header
+      name: X-Universa-Signature
+  parameters:
+    CustomerId:
+      name: customerId
+      in: path
+      required: true
+      schema:
+        type: string
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        maxLength: 200
+  schemas:
+    CreateCustomer:
+      type: object
+      required: [external_id, type, full_name, email, country_code]
+      properties:
+        external_id:
+          type: string
+        type:
+          type: string
+          enum: [individual, business]
+        full_name:
+          type: string
+        email:
+          type: string
+          format: email
+        country_code:
+          type: string
+          pattern: '^[A-Z]{2}$'
+        metadata:
+          type: object
+          additionalProperties: true
+    Route:
+      type: object
+      required: [currency, payment_rail]
+      properties:
+        currency:
+          type: string
+        payment_rail:
+          type: string
+      additionalProperties: true

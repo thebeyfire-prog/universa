@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-labelledby="title desc">
+  <title id="title">Universa oil hands corrected token image</title>
+  <desc id="desc">Oil-painted hands holding an off-white box logo with exact black universa text.</desc>
+
+  <image href="universa-oil-hands-base.png" x="0" y="0" width="1254" height="1254" preserveAspectRatio="xMidYMid slice"/>
+
+  <!-- Text-only overlay so the generated painted box stays clean and exact typography is preserved. -->
+  <g transform="translate(108 538)">
+    <text
+      x="519"
+      y="124"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      fill="#030304"
+      font-family="Arial Black, Helvetica Neue, Helvetica, sans-serif"
+      font-size="136"
+      font-style="italic"
+      font-weight="900"
+      letter-spacing="-10"
+      textLength="820"
+      lengthAdjust="spacingAndGlyphs">universa</text>
+  </g>
+</svg>

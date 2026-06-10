@@ -1,0 +1,15 @@
+.env
+.env.local
+.env.*
+!.env.example
+.DS_Store
+.supabase-db-password
+.secrets/
+node_modules/
+coverage/
+dist/
+contracts/artifacts/
+contracts/kyc-token-vault/target/
+launch/meteora-dbc/out/
+scripts/universa-token/.last-dbc-launch.json
+supabase/.temp/

@@ -1,0 +1,19 @@
+{
+  "name": "universa-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check public/app.js && node --check scripts/smoke-test.mjs",
+    "check:functions": "npx deno@latest check supabase/functions/platform-api/index.ts supabase/functions/dashboard-api/index.ts",
+    "check:all": "npm run check && npm run check:functions",
+    "contract:test": "npm --prefix contracts/kyc-token-vault test",
+    "dbc:plan": "npm --prefix launch/meteora-dbc run plan",
+    "dev": "npx wrangler pages dev public --port 8788",
+    "deploy:functions": "npx supabase functions deploy platform-api --project-ref $SUPABASE_PROJECT_REF && npx supabase functions deploy dashboard-api --project-ref $SUPABASE_PROJECT_REF",
+    "deploy:site": "npx wrangler pages deploy public --project-name universa",
+    "smoke": "node scripts/smoke-test.mjs",
+    "token:dry-run": "npm --prefix scripts/universa-token run dry-run",
+    "token:launch": "npm --prefix scripts/universa-token run launch"
+  }
+}

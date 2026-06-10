@@ -1,0 +1,19 @@
+{
+  "name": "Universa developer rewards vault",
+  "symbol": "UNV",
+  "mint": "<relaunched-unv-mint>",
+  "decimals": 6,
+  "totalSupplyTokens": "10000000",
+  "vaultAllocationTokens": "5000000",
+  "maxTotalRewardsRaw": "5000000000000",
+  "mutable": false,
+  "adminWithdraw": false,
+  "releaseInstruction": "release_developer_reward",
+  "epochExample": {
+    "epochId": 202607,
+    "startsAt": 1782864000,
+    "endsAt": 1785542400,
+    "maxEpochRewardsTokens": "100000",
+    "maxEpochRewardsRaw": "100000000000"
+  }
+}

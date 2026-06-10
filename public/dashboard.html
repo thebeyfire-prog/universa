@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Universa developer dashboard for KYC, API keys, customers, virtual accounts, payments, and webhooks."
+    />
+    <title>Universa Dashboard</title>
+    <link rel="icon" href="/assets/universa-logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body class="dashboard-page">
+    <main class="dashboard-main">
+      <section class="dashboard-shell section-shell" id="portal">
+        <aside class="dashboard-sidebar" aria-label="Dashboard navigation">
+          <a class="dashboard-sidebar-brand" href="/" aria-label="Universa home">
+            <span class="dashboard-orbit" aria-hidden="true"></span>
+            <strong>universa</strong>
+          </a>
+
+          <div class="dashboard-user">
+            <span id="portal-identity">Checking session...</span>
+          </div>
+
+          <nav class="dashboard-nav" aria-label="Products">
+            <p>Products</p>
+            <a class="is-active" href="#home" data-dashboard-nav="home">Home</a>
+            <a href="#payments" data-dashboard-nav="payments">Payments</a>
+            <a href="#wallets" data-dashboard-nav="wallets">Wallets</a>
+            <a href="#customers" data-dashboard-nav="customers">Customers</a>
+          </nav>
+
+          <nav class="dashboard-nav" aria-label="Build">
+            <p>Build</p>
+            <a href="#api" data-dashboard-nav="api">API docs</a>
+            <a href="#fees" data-dashboard-nav="fees">Fees</a>
+            <a href="#webhooks" data-dashboard-nav="webhooks">Webhooks</a>
+          </nav>
+
+          <div class="dashboard-sidebar-footer">
+            <a href="/">Back to site</a>
+            <button class="dashboard-logout" id="sign-out-button" type="button">Log out</button>
+          </div>
+        </aside>
+
+        <div class="dashboard-content">
+          <div class="dashboard-mobile-top">
+            <button class="dashboard-menu-button" type="button" data-dashboard-menu aria-label="Open navigation">☰</button>
+            <a class="button button-light-outline" href="/">Back to site</a>
+          </div>
+
+          <section class="dashboard-panel is-active" id="home" data-dashboard-panel="home">
+            <div class="dashboard-panel-header">
+              <p class="portal-label">Workspace</p>
+              <h1>Home</h1>
+              <p>
+                Complete KYC to receive your own virtual account right away,
+                then start testing live fund movement yourself before onboarding
+                customer flows.
+              </p>
+            </div>
+
+            <div class="dashboard-action-row">
+              <button class="dashboard-action-primary" type="button" data-kyc-action>Complete KYC</button>
+              <button class="dashboard-action-secondary" type="button" data-panel-target="api">Create API key</button>
+              <button class="dashboard-action-secondary" type="button" data-panel-target="fees">Set fees</button>
+              <button class="dashboard-action-secondary" type="button" data-panel-target="webhooks">Add webhook</button>
+            </div>
+
+            <div class="kyc-status-grid" aria-label="Account KYC and API access status">
+              <article class="kyc-status-card" data-kyc-state-card>
+                <p class="portal-label">Account KYC</p>
+                <h2 data-kyc-status-label>Account KYC required</h2>
+                <p data-kyc-status-copy>
+                  Universa uses the same provider-hosted KYC flow . Once
+                  the provider marks this account active, your virtual account and API
+                  key access unlock together.
+                </p>
+                <div class="kyc-status-steps">
+                  <span data-kyc-step="kyc">KYC not started</span>
+                  <span data-kyc-step="va">VA locked</span>
+                  <span data-kyc-step="key">API keys locked</span>
+                </div>
+              </article>
+              <article class="kyc-status-card">
+                <p class="portal-label">API key</p>
+                <h2 data-api-key-status>Locked until Account KYC</h2>
+                <p data-api-key-copy>
+                  After Account KYC is active, create a server key, store the
+                  secret once, and use the key prefix for request logs.
+                </p>
+                <code data-api-key-preview>No key issued yet</code>
+                <div class="api-key-output" data-api-key-output hidden>
+                  <p class="portal-label">One-time credentials</p>
+                  <span>API key</span>
+                  <code id="created-api-key">Created key appears here once</code>
+                  <button type="button" data-copy-target="created-api-key" data-copy-label="API key copied">Copy API key</button>
+                  <span>Signing secret</span>
+                  <code id="created-api-secret">Created secret appears here once</code>
+                  <button type="button" data-copy-target="created-api-secret" data-copy-label="Signing secret copied">Copy secret</button>
+                  <p>Store these now. The signing secret is not returned again.</p>
+                </div>
+              </article>
+            </div>
+
+            <div class="dashboard-section-heading">
+              <div>
+                <h2>Tasks</h2>
+                <p>Setup actions that need your attention.</p>
+              </div>
+            </div>
+
+            <div class="dashboard-task-list">
+              <article class="dashboard-task">
+                <span class="dashboard-task-icon">ID</span>
+                <div>
+                  <h3>Complete KYC</h3>
+                  <p>The Account KYC approval you already use in Universa is the account approval for the API. Active status unlocks your VA and API key controls.</p>
+                </div>
+                <button type="button" data-kyc-action>Start</button>
+              </article>
+              <article class="dashboard-task">
+                <span class="dashboard-task-icon">KEY</span>
+                <div>
+                  <h3>Create API keys</h3>
+                  <p>Generate server-side keys for signed requests. Provider credentials stay inside Universa.</p>
+                </div>
+                <button type="button" data-panel-target="api">Start</button>
+              </article>
+              <article class="dashboard-task">
+                <span class="dashboard-task-icon">KYC</span>
+                <div>
+                  <h3>Launch first customer KYC</h3>
+                  <p>Customers complete hosted KYC before virtual account details or transfers are enabled.</p>
+                </div>
+                <button type="button" data-panel-target="customers">Start</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="dashboard-panel" id="payments" data-dashboard-panel="payments" hidden>
+            <div class="dashboard-panel-header">
+              <p class="portal-label">Payments</p>
+              <h1>Payments</h1>
+              <p>Quote routes, collect funds, transfer stablecoins, and send payouts through one signed API flow.</p>
+            </div>
+
+            <div class="dashboard-action-row">
+              <button class="dashboard-action-primary" type="button">Create quote</button>
+              <button class="dashboard-action-secondary" type="button">Create transfer</button>
+              <button class="dashboard-action-secondary" type="button" data-panel-target="fees">Set fees</button>
+              <button class="dashboard-action-secondary" type="button" data-panel-target="webhooks">Test webhook</button>
+            </div>
+
+            <div class="dashboard-empty-row">
+              <strong>No payment data connected</strong>
+              <span>Balances, incoming deposits, pending payouts, returns, and completed transfers will appear after this login is mapped to a tenant.</span>
+            </div>
+          </section>
+
+          <section class="dashboard-panel" id="wallets" data-dashboard-panel="wallets" hidden>
+            <div class="dashboard-panel-header">
+              <p class="portal-label">Wallets</p>
+              <h1>Wallets</h1>
+              <p>Issue reusable virtual accounts for approved customers and define where funds settle.</p>
+            </div>
+
+            <div class="dashboard-action-row">
+              <button class="dashboard-action-primary" type="button">Create virtual account</button>
+              <button class="dashboard-action-secondary" type="button">Set settlement wallet</button>
+              <button class="dashboard-action-secondary" type="button" data-panel-target="customers">Review customer KYC</button>
+            </div>
+
+            <div class="dashboard-steps">
+              <article>
+                <b>01</b>
+                <h3>Customer KYC approved</h3>
+                <p>Virtual accounts stay locked until the customer has completed hosted KYC.</p>
+              </article>
+              <article>
+                <b>02</b>
+                <h3>Issue account details</h3>
+                <p>Create ACH, wire, or stablecoin-backed deposit details for that customer.</p>
+              </article>
+              <article>
+                <b>03</b>
+                <h3>Settle to your route</h3>
+                <p>Funds settle to the configured treasury, wallet, or payout route.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="dashboard-panel" id="customers" data-dashboard-panel="customers" hidden>
+            <div class="dashboard-panel-header">
+              <p class="portal-label">Customers</p>
+              <h1>Customers</h1>
+              <p>Create individual or business customers, start hosted KYC, and unlock virtual accounts after approval.</p>
+            </div>
+
+            <div class="dashboard-action-row">
+              <button class="dashboard-action-primary" type="button">Create customer</button>
+              <button class="dashboard-action-secondary" type="button">Start KYC</button>
+              <button class="dashboard-action-secondary" type="button" data-panel-target="wallets">Issue VA</button>
+            </div>
+
+            <div class="dashboard-empty-row">
+              <strong>No customers connected</strong>
+              <span>Customer records, KYC sessions, restrictions, and virtual account eligibility will appear here after tenant data is connected.</span>
+            </div>
+          </section>
+
+          <section class="dashboard-panel" id="api" data-dashboard-panel="api" hidden>
+            <div class="dashboard-panel-header">
+              <p class="portal-label">API docs</p>
+              <h1>API docs</h1>
+              <p>Every server request is signed with your API key. Copy one endpoint or copy the full LLM integration brief.</p>
+            </div>
+
+            <div class="dashboard-action-row">
+              <button class="dashboard-action-primary" type="button" data-api-key-action>Create API key</button>
+              <button class="dashboard-action-secondary" data-copy-target="api-endpoint" type="button">Copy endpoint</button>
+              <button class="dashboard-action-secondary" data-copy-target="llm-integration-brief" data-copy-label="LLM brief copied" type="button">Copy for LLM</button>
+            </div>
+
+            <code id="api-endpoint">Loading...</code>
+
+            <div class="api-auth-card">
+              <h2>Authentication</h2>
+              <p>
+                Account KYC approval is the account approval for API access.
+                After it is active, sign every server request with HMAC headers.
+                Mutating requests should include an <code>idempotency-key</code>.
+                The canonical signature payload is timestamp, nonce, method,
+                path, and SHA-256 body hash.
+              </p>
+              <button class="text-button" data-copy-target="copy-auth-signing" data-copy-label="Signing guide copied" type="button">Copy signing guide</button>
+              <pre id="copy-auth-signing">Headers:
+content-type: application/json
+idempotency-key: unique-operation-key
+x-universa-api-key: $UNIVERSA_API_KEY
+x-universa-timestamp: $TIMESTAMP_MS
+x-universa-nonce: $NONCE
+x-universa-signature: $SIGNATURE
+
+Canonical string:
+$TIMESTAMP_MS + "\n" +
+$NONCE + "\n" +
+$METHOD + "\n" +
+$PATH_WITH_QUERY + "\n" +
+sha256($RAW_BODY)
+
+Signature:
+hex(hmac_sha256($UNIVERSA_API_SECRET, canonical_string))</pre>
+            </div>
+
+            <div class="api-doc-list" aria-label="Universa API endpoint reference">
+              <article class="api-doc-card">
+                <div class="api-doc-top">
+                  <div>
+                    <span class="api-method">POST</span>
+                    <h2>/v1/customers</h2>
+                  </div>
+                  <button type="button" data-copy-target="copy-create-customer" data-copy-label="Customer request copied">Copy</button>
+                </div>
+                <p>Create an individual or business customer record. Money movement stays locked until that customer completes hosted KYC.</p>
+                <dl>
+                  <div><dt>Scope</dt><dd>customers:write</dd></div>
+                  <div><dt>Body</dt><dd>external_id, type, full_name, email, country_code, metadata</dd></div>
+                  <div><dt>Returns</dt><dd>customer.id and status</dd></div>
+                </dl>
+                <pre id="copy-create-customer">curl -X POST "$UNIVERSA_API_URL/v1/customers" \
+  -H "content-type: application/json" \
+  -H "idempotency-key: customer-acme-001" \
+  -H "x-universa-api-key: $UNIVERSA_API_KEY" \
+  -H "x-universa-timestamp: $TIMESTAMP_MS" \
+  -H "x-universa-nonce: $NONCE" \
+  -H "x-universa-signature: $SIGNATURE" \
+  -d '{
+    "external_id": "user_123",
+    "type": "individual",
+    "full_name": "Jane Customer",
+    "email": "jane@example.com",
+    "country_code": "US",
+    "metadata": { "plan": "sandbox" }
+  }'</pre>
+              </article>
+
+              <article class="api-doc-card">
+                <div class="api-doc-top">
+                  <div>
+                    <span class="api-method">GET</span>
+                    <h2>/v1/customers/{customer_id}</h2>
+                  </div>
+                  <button type="button" data-copy-target="copy-get-customer" data-copy-label="Get customer request copied">Copy</button>
+                </div>
+                <p>Fetch the customer, provider KYC status, and metadata your app should use before showing account or transfer actions.</p>
+                <dl>
+                  <div><dt>Scope</dt><dd>customers:read</dd></div>
+                  <div><dt>Path</dt><dd>customer_id returned by create customer</dd></div>
+                  <div><dt>Returns</dt><dd>customer object</dd></div>
+                </dl>
+                <pre id="copy-get-customer">curl "$UNIVERSA_API_URL/v1/customers/cus_..." \
+  -H "x-universa-api-key: $UNIVERSA_API_KEY" \
+  -H "x-universa-timestamp: $TIMESTAMP_MS" \
+  -H "x-universa-nonce: $NONCE" \
+  -H "x-universa-signature: $SIGNATURE"</pre>
+              </article>
+
+              <article class="api-doc-card">
+                <div class="api-doc-top">
+                  <div>
+                    <span class="api-method">POST</span>
+                    <h2>/v1/customers/{customer_id}/kyc-sessions</h2>
+                  </div>
+                  <button type="button" data-copy-target="copy-create-kyc" data-copy-label="KYC request copied">Copy</button>
+                </div>
+                <p>Start provider-hosted KYC for the customer. Send the returned KYC URL to the user and wait for approval before issuing a virtual account.</p>
+                <dl>
+                  <div><dt>Scope</dt><dd>kyc:write</dd></div>
+                  <div><dt>Body</dt><dd>empty JSON object</dd></div>
+                  <div><dt>Returns</dt><dd>kyc_session.kyc_url, tos_url, status, customer</dd></div>
+                </dl>
+                <pre id="copy-create-kyc">curl -X POST "$UNIVERSA_API_URL/v1/customers/cus_.../kyc-sessions" \
+  -H "content-type: application/json" \
+  -H "idempotency-key: kyc-cus-001" \
+  -H "x-universa-api-key: $UNIVERSA_API_KEY" \
+  -H "x-universa-timestamp: $TIMESTAMP_MS" \
+  -H "x-universa-nonce: $NONCE" \
+  -H "x-universa-signature: $SIGNATURE" \
+  -d '{}'</pre>
+              </article>
+
+              <article class="api-doc-card">
+                <div class="api-doc-top">
+                  <div>
+                    <span class="api-method">POST</span>
+                    <h2>/v1/customers/{customer_id}/virtual-accounts</h2>
+                  </div>
+                  <button type="button" data-copy-target="copy-create-va" data-copy-label="Virtual account request copied">Copy</button>
+                </div>
+                <p>Issue reusable fiat deposit details for an approved customer and define the stablecoin or treasury destination.</p>
+                <dl>
+                  <div><dt>Scope</dt><dd>virtual_accounts:write</dd></div>
+                  <div><dt>Requires</dt><dd>customer.status = active and provider_kyc_status = active</dd></div>
+                  <div><dt>Returns</dt><dd>virtual_account and deposit_instructions</dd></div>
+                </dl>
+                <pre id="copy-create-va">curl -X POST "$UNIVERSA_API_URL/v1/customers/cus_.../virtual-accounts" \
+  -H "content-type: application/json" \
+  -H "idempotency-key: va-cus-001" \
+  -H "x-universa-api-key: $UNIVERSA_API_KEY" \
+  -H "x-universa-timestamp: $TIMESTAMP_MS" \
+  -H "x-universa-nonce: $NONCE" \
+  -H "x-universa-signature: $SIGNATURE" \
+  -d '{
+    "source_currency": "usd",
+    "destination": {
+      "currency": "usdc",
+      "payment_rail": "base",
+      "address": "0xYourTreasuryWallet"
+    }
+  }'</pre>
+              </article>
+
+              <article class="api-doc-card">
+                <div class="api-doc-top">
+                  <div>
+                    <span class="api-method">GET</span>
+                    <h2>/v1/customers/{customer_id}/virtual-accounts</h2>
+                  </div>
+                  <button type="button" data-copy-target="copy-list-va" data-copy-label="List virtual accounts request copied">Copy</button>
+                </div>
+                <p>List all reusable virtual accounts created for the customer, including rails, destination, status, and deposit instructions.</p>
+                <dl>
+                  <div><dt>Scope</dt><dd>virtual_accounts:read</dd></div>
+                  <div><dt>Path</dt><dd>customer_id</dd></div>
+                  <div><dt>Returns</dt><dd>virtual_accounts array</dd></div>
+                </dl>
+                <pre id="copy-list-va">curl "$UNIVERSA_API_URL/v1/customers/cus_.../virtual-accounts" \
+  -H "x-universa-api-key: $UNIVERSA_API_KEY" \
+  -H "x-universa-timestamp: $TIMESTAMP_MS" \
+  -H "x-universa-nonce: $NONCE" \
+  -H "x-universa-signature: $SIGNATURE"</pre>
+              </article>
+
+              <article class="api-doc-card">
+                <div class="api-doc-top">
+                  <div>
+                    <span class="api-method">POST</span>
+                    <h2>/v1/quotes</h2>
+                  </div>
+                  <button type="button" data-copy-target="copy-create-quote" data-copy-label="Quote request copied">Copy</button>
+                </div>
+                <p>Lock route, amount, provider fee, Universa fee, your tenant fee, and network fee before transfer execution.</p>
+                <dl>
+                  <div><dt>Scope</dt><dd>quotes:write</dd></div>
+                  <div><dt>Fee input</dt><dd>tenant_fee_bps from the dashboard slider, currently <span data-tenant-fee-value>20 bps</span></dd></div>
+                  <div><dt>Returns</dt><dd>quote.id, destination amount, fee breakdown, expiry</dd></div>
+                </dl>
+                <pre id="copy-create-quote"></pre>
+              </article>
+
+              <article class="api-doc-card">
+                <div class="api-doc-top">
+                  <div>
+                    <span class="api-method">POST</span>
+                    <h2>/v1/transfers</h2>
+                  </div>
+                  <button type="button" data-copy-target="copy-create-transfer" data-copy-label="Transfer request copied">Copy</button>
+                </div>
+                <p>Consume an open quote once, create the provider transfer, and record platform fees in the ledger.</p>
+                <dl>
+                  <div><dt>Scope</dt><dd>transfers:write</dd></div>
+                  <div><dt>Requires</dt><dd>open, unexpired quote for an active KYC customer</dd></div>
+                  <div><dt>Returns</dt><dd>transfer status and source deposit instructions when applicable</dd></div>
+                </dl>
+                <pre id="copy-create-transfer">curl -X POST "$UNIVERSA_API_URL/v1/transfers" \
+  -H "content-type: application/json" \
+  -H "idempotency-key: transfer-quo-001" \
+  -H "x-universa-api-key: $UNIVERSA_API_KEY" \
+  -H "x-universa-timestamp: $TIMESTAMP_MS" \
+  -H "x-universa-nonce: $NONCE" \
+  -H "x-universa-signature: $SIGNATURE" \
+  -d '{
+    "quote_id": "quo_...",
+    "external_id": "transfer_123",
+    "source": {
+      "currency": "usd",
+      "payment_rail": "ach"
+    },
+    "destination": {
+      "currency": "usdc",
+      "payment_rail": "base",
+      "address": "0xRecipientWallet"
+    }
+  }'</pre>
+              </article>
+
+              <article class="api-doc-card">
+                <div class="api-doc-top">
+                  <div>
+                    <span class="api-method">GET</span>
+                    <h2>/v1/transfers/{transfer_id}</h2>
+                  </div>
+                  <button type="button" data-copy-target="copy-get-transfer" data-copy-label="Get transfer request copied">Copy</button>
+                </div>
+                <p>Poll or reconcile transfer state. Webhooks should handle the normal production flow, but this is useful for support and retries.</p>
+                <dl>
+                  <div><dt>Scope</dt><dd>transfers:read</dd></div>
+                  <div><dt>Path</dt><dd>transfer_id returned by create transfer</dd></div>
+                  <div><dt>Returns</dt><dd>transfer status, amounts, fees, and timestamps</dd></div>
+                </dl>
+                <pre id="copy-get-transfer">curl "$UNIVERSA_API_URL/v1/transfers/tr_..." \
+  -H "x-universa-api-key: $UNIVERSA_API_KEY" \
+  -H "x-universa-timestamp: $TIMESTAMP_MS" \
+  -H "x-universa-nonce: $NONCE" \
+  -H "x-universa-signature: $SIGNATURE"</pre>
+              </article>
+            </div>
+            <pre id="llm-integration-brief" hidden></pre>
+          </section>
+
+          <section class="dashboard-panel" id="fees" data-dashboard-panel="fees" hidden>
+            <div class="dashboard-panel-header">
+              <p class="portal-label">Fees</p>
+              <h1>Fees</h1>
+              <p>Preview the tenant markup that gets added on top of the Universa platform fee and included in quote creation.</p>
+            </div>
+
+            <div class="fee-console-card">
+              <div>
+                <span class="portal-label">Tenant markup</span>
+                <h2><span id="tenant-fee-label">20 bps</span></h2>
+                <p>Use this value as <code>tenant_fee_bps</code> when creating a quote. Persisted tenant fee settings need the dashboard API.</p>
+              </div>
+              <label for="tenant-fee-bps">Adjust fee bps</label>
+              <input id="tenant-fee-bps" type="range" min="0" max="300" value="20" />
+              <div class="fee-preview">
+                <span>Universa fee</span><strong>30 bps</strong>
+                <span>Your markup</span><strong data-tenant-fee-value>20 bps</strong>
+                <span>Total platform fee</span><strong id="total-fee-label">50 bps</strong>
+              </div>
+              <div class="dashboard-action-row">
+                <button class="dashboard-action-primary" data-panel-target="api" type="button">Use in quote docs</button>
+                <button class="dashboard-action-secondary" data-copy-target="copy-create-quote" data-copy-label="Quote request copied" type="button">Copy quote request</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="dashboard-panel" id="webhooks" data-dashboard-panel="webhooks" hidden>
+            <div class="dashboard-panel-header">
+              <p class="portal-label">Webhooks</p>
+              <h1>Webhooks</h1>
+              <p>Receive KYC, virtual account, quote, transfer, payout, and return events in your backend.</p>
+            </div>
+
+            <div class="dashboard-action-row">
+              <button class="dashboard-action-primary" type="button">Add endpoint</button>
+              <button class="dashboard-action-secondary" type="button">Send test event</button>
+              <button class="dashboard-action-secondary" type="button">View signing secret</button>
+            </div>
+
+            <div class="dashboard-empty-row">
+              <strong>No webhook endpoint connected</strong>
+              <span>Delivery status, failed events, retry attempts, and signing secrets will appear here after tenant data is connected.</span>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
