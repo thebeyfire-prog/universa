@@ -5,10 +5,10 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-kyc_token_vault = "3JSQmmimLR2fNy1wtrk3CAYpaT6uw1erEjBSU3fVEcwg"
+kyc_token_vault = "8uQrLVdn8geKdBPVJmoNWUyosN7xoQKxzjdWYpvrAZ3H"
 
 [programs.mainnet]
-kyc_token_vault = "3JSQmmimLR2fNy1wtrk3CAYpaT6uw1erEjBSU3fVEcwg"
+kyc_token_vault = "8uQrLVdn8geKdBPVJmoNWUyosN7xoQKxzjdWYpvrAZ3H"
 
 [provider]
 cluster = "localnet"

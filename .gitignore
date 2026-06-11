@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 .DS_Store
+.wrangler/
 .supabase-db-password
 .secrets/
 node_modules/
@@ -13,3 +14,4 @@ contracts/kyc-token-vault/target/
 launch/meteora-dbc/out/
 scripts/universa-token/.last-dbc-launch.json
 supabase/.temp/
+supabase/supabase/

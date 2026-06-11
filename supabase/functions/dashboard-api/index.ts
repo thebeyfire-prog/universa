@@ -84,6 +84,16 @@ Deno.serve(async (request) => {
       })
     }
 
+    const apiKeyMatch = path.match(/^\/api-keys\/([^/]+)$/)
+    if (request.method === 'DELETE' && apiKeyMatch) {
+      return dashboardJson(
+        request,
+        await revokeApiKey(admin, context, decodeURIComponent(apiKeyMatch[1]), request),
+        200,
+        { 'X-Universa-Request-Id': requestId },
+      )
+    }
+
     throw new ApiError(404, 'not_found', 'Route not found')
   } catch (error) {
     const apiError = error instanceof ApiError
@@ -125,12 +135,14 @@ function allowedOrigin(origin: string | null): string {
   const normalized = origin ?? ''
   if (
     normalized === 'https://universa-brm.pages.dev'
+    || normalized === 'https://universarails.xyz'
+    || normalized === 'https://www.universarails.xyz'
     || /^https:\/\/[a-z0-9-]+\.universa-brm\.pages\.dev$/.test(normalized)
     || /^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(normalized)
   ) {
     return normalized
   }
-  return 'https://universa-brm.pages.dev'
+  return 'https://universarails.xyz'
 }
 
 async function authenticateDashboard(
@@ -463,10 +475,46 @@ async function createApiKey(
   }
 }
 
+async function revokeApiKey(
+  admin: any,
+  context: DashboardContext,
+  keyIdValue: string,
+  request: Request,
+): Promise<Record<string, unknown>> {
+  assertCanMutate(context)
+  const keyId = requireString(keyIdValue, 'api_key_id', {
+    max: 80,
+    pattern: /^key_[A-Za-z0-9_-]+$/,
+  })
+  const now = new Date().toISOString()
+  const { data, error } = await admin
+    .from('tenant_api_keys')
+    .update({
+      status: 'revoked',
+      revoked_at: now,
+    })
+    .eq('tenant_id', context.tenant.id)
+    .eq('id', keyId)
+    .eq('status', 'active')
+    .select('id,name,key_prefix,scopes,status,last_used_at,created_at,revoked_at')
+    .maybeSingle()
+  if (error) throw error
+  if (!data) {
+    throw new ApiError(404, 'api_key_not_found', 'Active API key not found')
+  }
+
+  await audit(admin, context, 'dashboard.api_key_revoked', 'api_key', keyId, {
+    ip: clientIp(request),
+    user_agent: request.headers.get('user-agent') ?? null,
+  })
+
+  return { api_key: data }
+}
+
 async function listApiKeys(admin: any, tenantId: string): Promise<Array<Record<string, unknown>>> {
   const { data, error } = await admin
     .from('tenant_api_keys')
-    .select('id,name,key_prefix,scopes,status,last_used_at,created_at')
+    .select('id,name,key_prefix,scopes,status,last_used_at,created_at,revoked_at')
     .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false })
     .limit(20)

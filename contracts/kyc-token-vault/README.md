@@ -55,7 +55,7 @@ Epoch caps should be created monthly or quarterly. Example:
 
 ## Deployment Notes
 
-Current generated program id: `3JSQmmimLR2fNy1wtrk3CAYpaT6uw1erEjBSU3fVEcwg`.
+Current generated program id: `8uQrLVdn8geKdBPVJmoNWUyosN7xoQKxzjdWYpvrAZ3H`.
 
 1. Generate the program keypair locally and keep it out of Git.
 2. Confirm `Anchor.toml` and `declare_id!` match the generated public program id.

@@ -3,6 +3,7 @@ import { Program } from '@coral-xyz/anchor'
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccount,
   createMint,
   getAccount,
   getAssociatedTokenAddressSync,
@@ -91,6 +92,7 @@ describe('universa developer rewards vault', () => {
       BigInt(MAX_TOTAL_REWARDS.toString()),
     )
 
+    const now = Math.floor(Date.now() / 1000)
     const epochId = new BN(202607)
     const epoch = pda(program.programId, [
       Buffer.from('epoch'),
@@ -100,7 +102,7 @@ describe('universa developer rewards vault', () => {
 
     const unauthorizedCreate = await expectReject(
       program.methods
-        .createEpoch(epochId, new BN(1), new BN(2), new BN(700))
+        .createEpoch(epochId, new BN(now - 60), new BN(now + 3_600), new BN(700))
         .accountsStrict({
           config,
           rewardsAuthority: attacker.publicKey,
@@ -115,7 +117,7 @@ describe('universa developer rewards vault', () => {
     assertAnchorError(unauthorizedCreate, 'unauthorizedRewardsAuthority')
 
     await program.methods
-      .createEpoch(epochId, new BN(1), new BN(2), new BN(700))
+      .createEpoch(epochId, new BN(now - 60), new BN(now + 3_600), new BN(700))
       .accountsStrict({
         config,
         rewardsAuthority: rewardsAuthority.publicKey,
@@ -131,7 +133,12 @@ describe('universa developer rewards vault', () => {
     assert.equal(configState.totalReleased.toString(), '0')
     assert.equal(configState.epochCount.toString(), '1')
 
-    const developerATokenAccount = getAssociatedTokenAddressSync(mint, developerA.publicKey)
+    const developerATokenAccount = await createAssociatedTokenAccount(
+      provider.connection,
+      payer,
+      mint,
+      developerA.publicKey,
+    )
     const claimA = pda(program.programId, [
       Buffer.from('claim'),
       config.toBuffer(),
@@ -154,9 +161,7 @@ describe('universa developer rewards vault', () => {
           developerTokenAccount: developerATokenAccount,
           payer: payer.publicKey,
           tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
-          rent: SYSVAR_RENT_PUBKEY,
         })
         .signers([attacker])
         .rpc(),
@@ -178,9 +183,7 @@ describe('universa developer rewards vault', () => {
         developerTokenAccount: developerATokenAccount,
         payer: payer.publicKey,
         tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
-        rent: SYSVAR_RENT_PUBKEY,
       })
       .signers([rewardsAuthority])
       .rpc()
@@ -209,9 +212,7 @@ describe('universa developer rewards vault', () => {
           developerTokenAccount: developerATokenAccount,
           payer: payer.publicKey,
           tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
-          rent: SYSVAR_RENT_PUBKEY,
         })
         .signers([rewardsAuthority])
         .rpc(),
@@ -219,7 +220,12 @@ describe('universa developer rewards vault', () => {
     )
     assert.match(String((duplicateClaim as any)?.message ?? duplicateClaim), /already|use|custom|account/i)
 
-    const developerBTokenAccount = getAssociatedTokenAddressSync(mint, developerB.publicKey)
+    const developerBTokenAccount = await createAssociatedTokenAccount(
+      provider.connection,
+      payer,
+      mint,
+      developerB.publicKey,
+    )
     const claimB = pda(program.programId, [
       Buffer.from('claim'),
       config.toBuffer(),
@@ -242,9 +248,7 @@ describe('universa developer rewards vault', () => {
           developerTokenAccount: developerBTokenAccount,
           payer: payer.publicKey,
           tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
-          rent: SYSVAR_RENT_PUBKEY,
         })
         .signers([rewardsAuthority])
         .rpc(),
@@ -284,9 +288,7 @@ describe('universa developer rewards vault', () => {
           developerTokenAccount: developerBTokenAccount,
           payer: payer.publicKey,
           tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
-          rent: SYSVAR_RENT_PUBKEY,
         })
         .signers([rewardsAuthority])
         .rpc(),
@@ -302,7 +304,7 @@ describe('universa developer rewards vault', () => {
     ])
 
     await program.methods
-      .createEpoch(epochId2, new BN(2), new BN(3), new BN(900))
+      .createEpoch(epochId2, new BN(now - 60), new BN(now + 3_600), new BN(900))
       .accountsStrict({
         config,
         rewardsAuthority: rewardsAuthority.publicKey,
@@ -325,7 +327,7 @@ describe('universa developer rewards vault', () => {
     ])
     const overTotalCap = await expectReject(
       program.methods
-        .createEpoch(epochId3, new BN(3), new BN(4), new BN(1))
+        .createEpoch(epochId3, new BN(now - 60), new BN(now + 3_600), new BN(1))
         .accountsStrict({
           config,
           rewardsAuthority: rewardsAuthority.publicKey,

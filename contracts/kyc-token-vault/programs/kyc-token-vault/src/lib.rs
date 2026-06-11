@@ -4,7 +4,7 @@ use anchor_spl::{
     token::{self, Mint, Token, TokenAccount, Transfer},
 };
 
-declare_id!("3JSQmmimLR2fNy1wtrk3CAYpaT6uw1erEjBSU3fVEcwg");
+declare_id!("8uQrLVdn8geKdBPVJmoNWUyosN7xoQKxzjdWYpvrAZ3H");
 
 #[program]
 pub mod kyc_token_vault {
@@ -123,6 +123,16 @@ pub mod kyc_token_vault {
         );
         require!(!epoch.frozen, VaultError::EpochFrozen);
 
+        let clock = Clock::get()?;
+        require!(
+            clock.unix_timestamp >= epoch.starts_at,
+            VaultError::EpochNotStarted
+        );
+        require!(
+            clock.unix_timestamp <= epoch.ends_at,
+            VaultError::EpochEnded
+        );
+
         let total_released = config
             .total_released
             .checked_add(amount)
@@ -155,8 +165,8 @@ pub mod kyc_token_vault {
         claim.amount = amount;
         claim.volume_usd = volume_usd;
         claim.fees_generated = fees_generated;
-        claim.released_at = Clock::get()?.unix_timestamp;
-        claim.release_slot = Clock::get()?.slot;
+        claim.released_at = clock.unix_timestamp;
+        claim.release_slot = clock.slot;
 
         let signer_seeds: &[&[u8]] = &[
             b"vault_authority",
@@ -281,8 +291,7 @@ pub struct ReleaseDeveloperReward<'info> {
     )]
     pub config: Account<'info, Config>,
 
-    /// CHECK: The config constraint pins this account to the configured mint.
-    pub mint: UncheckedAccount<'info>,
+    pub mint: Account<'info, Mint>,
 
     #[account(
         mut,
@@ -316,23 +325,20 @@ pub struct ReleaseDeveloperReward<'info> {
         seeds = [b"claim", config.key().as_ref(), epoch.key().as_ref(), developer.key().as_ref()],
         bump
     )]
-    pub claim: Account<'info, RewardClaim>,
+    pub claim: Box<Account<'info, RewardClaim>>,
 
     #[account(
-        init_if_needed,
-        payer = payer,
-        associated_token::mint = mint,
-        associated_token::authority = developer
+        mut,
+        constraint = developer_token_account.mint == config.mint @ VaultError::InvalidDeveloperTokenAccount,
+        constraint = developer_token_account.owner == developer.key() @ VaultError::InvalidDeveloperTokenAccount
     )]
-    pub developer_token_account: Account<'info, TokenAccount>,
+    pub developer_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
 
     pub token_program: Program<'info, Token>,
-    pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>,
-    pub rent: Sysvar<'info, Rent>,
 }
 
 #[account]
@@ -397,6 +403,10 @@ pub enum VaultError {
     MaxEpochRewardsExceeded,
     #[msg("The reward epoch is frozen.")]
     EpochFrozen,
+    #[msg("The reward epoch has not started.")]
+    EpochNotStarted,
+    #[msg("The reward epoch has ended.")]
+    EpochEnded,
     #[msg("The vault does not have enough tokens for this claim.")]
     InsufficientVaultBalance,
     #[msg("Invalid mint account.")]
@@ -405,6 +415,8 @@ pub enum VaultError {
     InvalidVault,
     #[msg("Invalid reward epoch account.")]
     InvalidEpoch,
+    #[msg("Invalid developer token account.")]
+    InvalidDeveloperTokenAccount,
     #[msg("Math overflow.")]
     MathOverflow,
 }

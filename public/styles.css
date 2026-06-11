@@ -962,6 +962,71 @@ button {
   margin-top: 24px;
 }
 
+.protocol-github-link-disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.contract-address-card {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgba(7, 20, 15, 0.12);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 48px rgba(17, 36, 29, 0.08);
+}
+
+.contract-address-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contract-address-card strong {
+  display: block;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: clamp(12px, 1.3vw, 15px);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.contract-address-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.contract-address-actions button,
+.contract-address-actions a {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border: 1px solid rgba(7, 20, 15, 0.14);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.contract-address-actions a {
+  background: transparent;
+  color: var(--ink);
+}
+
 .token-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1644,6 +1709,159 @@ pre {
 .api-key-output p:not(.portal-label) {
   color: rgba(255, 255, 255, 0.76);
   font-size: 13px;
+}
+
+.home-api-key-list {
+  margin-top: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.home-api-key-list[hidden] {
+  display: none;
+}
+
+.home-api-key-row {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.home-api-key-row code {
+  margin-top: 0;
+}
+
+.home-api-key-row button,
+.home-api-key-list > button {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid rgba(7, 20, 15, 0.12);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.home-api-key-list > p:not(.portal-label) {
+  margin: 2px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.home-api-key-list > button {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.api-key-manager {
+  margin: -12px 0 24px;
+  padding: 22px;
+  border: 1px solid rgba(7, 20, 15, 0.1);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(174, 231, 255, 0.42), transparent 38%),
+    rgba(255, 255, 255, 0.74);
+}
+
+.api-key-manager-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.api-key-manager-header h2 {
+  margin: 8px 0 10px;
+  color: var(--ink);
+  font-size: clamp(32px, 4vw, 46px);
+  line-height: 0.95;
+  letter-spacing: -0.07em;
+}
+
+.api-key-manager-header p:not(.portal-label) {
+  max-width: 720px;
+  margin: 0;
+  color: var(--muted);
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.api-key-list {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.api-key-row {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(7, 20, 15, 0.1);
+  border-radius: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.api-key-row.is-revoked {
+  opacity: 0.64;
+}
+
+.api-key-row h3 {
+  margin: 6px 0 10px;
+  color: var(--ink);
+  font-size: clamp(23px, 3vw, 31px);
+  letter-spacing: -0.055em;
+}
+
+.api-key-row code {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  overflow-x: auto;
+  background: var(--sky-soft);
+  color: #1d8eb8;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.api-key-row p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 750;
+}
+
+.api-key-row .api-key-secret-note {
+  color: rgba(7, 20, 15, 0.56);
+}
+
+.api-key-row-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.api-key-row-actions button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(7, 20, 15, 0.12);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.api-key-row-actions button[data-api-key-revoke] {
+  background: var(--ink);
+  color: var(--white);
 }
 
 .dashboard-steps {
@@ -2848,6 +3066,19 @@ pre {
   .fee-console-card {
     padding: 16px;
     border-radius: 18px;
+  }
+
+  .api-key-manager {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .api-key-row {
+    grid-template-columns: 1fr;
+  }
+
+  .api-key-row-actions {
+    grid-template-columns: 1fr;
   }
 
   .portal-grid {

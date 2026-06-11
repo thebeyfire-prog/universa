@@ -12,7 +12,7 @@ export const CORS_HEADERS = {
     'x-universa-nonce',
     'x-universa-signature',
   ].join(', '),
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
 }
 
 export function jsonResponse(

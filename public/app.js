@@ -62,6 +62,8 @@ let phraseIndex = 0
 let toastTimer
 let activeQuoteRoute = 'mxn'
 let dashboardAccessStatus = 'not_started'
+let dashboardApiKeys = []
+let activateDashboardPanel = () => {}
 
 function isDashboardPage() {
   return window.location.pathname === DASHBOARD_PATH
@@ -191,9 +193,30 @@ async function initializeAuth() {
     button.addEventListener('click', async () => {
       const target = document.querySelector(`#${button.dataset.copyTarget}`)
       if (!target) return
-      await navigator.clipboard.writeText(target.textContent.trim())
-      showToast(button.dataset.copyLabel ?? 'Copied')
+      await copyText(target.textContent.trim(), button.dataset.copyLabel ?? 'Copied')
     })
+  })
+
+  document.addEventListener('click', async (event) => {
+    const target = event.target
+    if (!(target instanceof Element)) return
+
+    const panelButton = target.closest('[data-panel-target]')
+    if (panelButton) {
+      activateDashboardPanel(panelButton.dataset.panelTarget)
+      return
+    }
+
+    const copyButton = target.closest('[data-copy-value]')
+    if (copyButton) {
+      await copyText(copyButton.dataset.copyValue ?? '', copyButton.dataset.copyLabel ?? 'Copied')
+      return
+    }
+
+    const revokeButton = target.closest('[data-api-key-revoke]')
+    if (revokeButton) {
+      await revokeDashboardApiKey(revokeButton.dataset.apiKeyRevoke)
+    }
   })
 
   document.querySelectorAll('[data-kyc-action]').forEach((button) => {
@@ -207,7 +230,7 @@ async function initializeAuth() {
   })
 
   document.querySelectorAll('[data-api-key-action]').forEach((button) => {
-    button.addEventListener('click', createDashboardApiKey)
+    button.addEventListener('click', () => handleApiKeyAction(button))
   })
 
   const {
@@ -244,6 +267,7 @@ function initializeDashboardNavigation() {
     }
     shell?.classList.remove('is-sidebar-open')
   }
+  activateDashboardPanel = activate
 
   navLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -300,11 +324,13 @@ async function readDashboardStatus(session) {
     accessToken: session.access_token,
   })
   const account = payload.account ?? payload.kyc ?? payload
-  const firstKey = Array.isArray(payload.api_keys) ? payload.api_keys[0] : null
+  const apiKeys = Array.isArray(payload.api_keys) ? payload.api_keys : []
+  const firstKey = apiKeys.find((key) => key.status === 'active') ?? apiKeys[0] ?? null
   return {
     account_kyc_status: account.account_kyc_status ?? account.status,
     provider_customer_id: account.provider_customer_id,
     kyc_status: account.kyc_status,
+    api_keys: apiKeys,
     api_key_prefix: payload.api_key_prefix ?? firstKey?.key_prefix,
   }
 }
@@ -328,6 +354,7 @@ async function syncDashboardKycStatus() {
       account_kyc_status: payload.account?.account_kyc_status,
       provider_customer_id: payload.account?.provider_customer_id,
       kyc_status: payload.account?.kyb_status,
+      api_keys: payload.api_keys,
       api_key_prefix: payload.api_keys?.[0]?.key_prefix,
     })
     showToast(
@@ -361,26 +388,80 @@ async function createDashboardApiKey() {
       body: { name: 'Default server key' },
     })
     const key = payload.api_key ?? payload.key ?? payload
+    dashboardApiKeys = [key, ...dashboardApiKeys.filter((existing) => existing.id !== key.id)]
     updateDashboardAccessState({
       account_kyc_status: 'active',
+      api_keys: dashboardApiKeys,
       api_key_prefix: key.key_prefix ?? key.prefix ?? key.id,
     })
     showCreatedApiKey(key)
-    showToast(key.secret ? 'API key created. Store the secret now.' : 'API key ready.')
+    showToast(
+      key.secret
+        ? 'API key created. Copy the key and signing secret now; the secret will not be shown again.'
+        : 'API key ready.',
+    )
   } catch (error) {
+    if (error?.code === 'api_key_limit_reached') {
+      activateDashboardPanel('api')
+      showToast('You already have 10 active keys. Revoke an old key first.')
+      return
+    }
     showToast(error instanceof Error ? error.message : 'API key creation failed.')
   }
 }
 
+async function handleApiKeyAction(button) {
+  const activeKeys = dashboardApiKeys.filter((key) => key.status === 'active')
+  if (button.dataset.apiKeyAction === 'manage') {
+    activateDashboardPanel('api')
+    showToast(
+      activeKeys.length
+        ? 'Existing keys are listed here. Revoke old keys before creating another.'
+        : 'Create your first API key from this panel.',
+    )
+    return
+  }
+  await createDashboardApiKey()
+}
+
 function showCreatedApiKey(key) {
-  const output = document.querySelector('[data-api-key-output]')
-  const apiKey = document.querySelector('#created-api-key')
-  const apiSecret = document.querySelector('#created-api-secret')
-  if (!output || !apiKey || !apiSecret) return
   if (!key.api_key && !key.secret) return
-  if (key.api_key) apiKey.textContent = key.api_key
-  if (key.secret) apiSecret.textContent = key.secret
-  output.hidden = false
+  document.querySelectorAll('[data-created-api-key]').forEach((element) => {
+    if (key.api_key) element.textContent = key.api_key
+  })
+  document.querySelectorAll('[data-created-api-secret]').forEach((element) => {
+    if (key.secret) element.textContent = key.secret
+  })
+  document.querySelectorAll('[data-api-key-output]').forEach((element) => {
+    element.hidden = false
+  })
+}
+
+async function revokeDashboardApiKey(keyId) {
+  if (!keyId) return
+  if (!window.confirm('Revoke this API key? Requests signed with this key will stop working.')) {
+    return
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  if (!session?.access_token) {
+    showToast('Sign in again before revoking an API key.')
+    return
+  }
+
+  try {
+    await requestDashboardApi(`/api-keys/${encodeURIComponent(keyId)}`, {
+      method: 'DELETE',
+      accessToken: session.access_token,
+    })
+    const status = await readDashboardStatus(session)
+    updateDashboardAccessState(status)
+    showToast('API key revoked.')
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : 'API key revoke failed.')
+  }
 }
 
 async function requestDashboardApi(path, options) {
@@ -394,7 +475,11 @@ async function requestDashboardApi(path, options) {
     body: options.body ? JSON.stringify(options.body) : undefined,
   })
   const payload = await response.json().catch(() => ({}))
-  if (!response.ok) throw new Error(payload.error?.message ?? 'Dashboard API request failed')
+  if (!response.ok) {
+    const error = new Error(payload.error?.message ?? 'Dashboard API request failed')
+    error.code = payload.error?.code
+    throw error
+  }
   return payload
 }
 
@@ -414,6 +499,12 @@ function statusFromAuthUser(user) {
 function updateDashboardAccessState(record = {}) {
   const status = normalizeKycStatus(record.account_kyc_status ?? record.kyc_status)
   dashboardAccessStatus = status
+  if (Array.isArray(record.api_keys)) {
+    dashboardApiKeys = record.api_keys
+    renderApiKeyList(dashboardApiKeys)
+    renderHomeApiKeySummary(dashboardApiKeys)
+    updateHomeApiKeyAction(dashboardApiKeys)
+  }
 
   const card = document.querySelector('[data-kyc-state-card]')
   const statusLabel = document.querySelector('[data-kyc-status-label]')
@@ -429,13 +520,17 @@ function updateDashboardAccessState(record = {}) {
   card.classList.remove('is-active', 'is-pending', 'is-rejected')
 
   if (isKycActive(status)) {
+    const activeKeyCount = dashboardApiKeys.filter((key) => key.status === 'active').length
     card.classList.add('is-active')
     statusLabel.textContent = 'Account KYC active'
     statusCopy.textContent =
       'The provider has approved this account. Universa can issue your virtual account right away and unlock API keys for signed server requests.'
-    apiStatus.textContent = 'Ready to create'
-    apiCopy.textContent =
-      'Create a server key, store the secret once, and use the key prefix for request logs and support.'
+    apiStatus.textContent = activeKeyCount
+      ? `${activeKeyCount} active API ${activeKeyCount === 1 ? 'key' : 'keys'}`
+      : 'Ready to create'
+    apiCopy.textContent = activeKeyCount
+      ? 'Existing key prefixes are shown below. Revoke old keys in API docs before creating another one.'
+      : 'Create a server key, copy the one-time signing secret into your backend, and use the key prefix for request logs and support.'
     apiPreview.textContent = record.api_key_prefix || record.key_prefix || 'Create a key to reveal prefix'
     if (kycStep) kycStep.textContent = 'KYC active'
     if (vaStep) vaStep.textContent = 'VA ready'
@@ -476,11 +571,82 @@ function updateDashboardAccessState(record = {}) {
     'Universa uses the same provider-hosted KYC flow . Once the provider marks this account active, your virtual account and API key access unlock together.'
   apiStatus.textContent = 'Locked until Account KYC'
   apiCopy.textContent =
-    'After Account KYC is active, create a server key, store the secret once, and use the key prefix for request logs.'
+    'After Account KYC is active, create a server key, copy the one-time signing secret into your backend, and use the key prefix for request logs.'
   apiPreview.textContent = 'No key issued yet'
   if (kycStep) kycStep.textContent = 'KYC not started'
   if (vaStep) vaStep.textContent = 'VA locked'
   if (keyStep) keyStep.textContent = 'API keys locked'
+}
+
+function renderApiKeyList(keys = dashboardApiKeys) {
+  document.querySelectorAll('[data-api-key-list]').forEach((list) => {
+    if (!keys.length) {
+      list.innerHTML = `<div class="dashboard-empty-row">
+        <strong>No API keys yet</strong>
+        <span>Create a key after Account KYC is active. Copy credentials directly into a backend secret manager. The full signing secret is shown once.</span>
+      </div>`
+      return
+    }
+
+    list.innerHTML = keys.map((key) => {
+      const isActive = key.status === 'active'
+      const scopes = Array.isArray(key.scopes) ? key.scopes.join(', ') : 'default scopes'
+      return `<article class="api-key-row${isActive ? '' : ' is-revoked'}">
+        <div>
+          <span class="portal-label">${escapeHtml(key.status ?? 'unknown')}</span>
+          <h3>${escapeHtml(key.name ?? 'Server key')}</h3>
+          <code>${escapeHtml(key.key_prefix ?? 'No prefix')}</code>
+          <p>Created ${escapeHtml(formatDashboardDate(key.created_at))}. Scopes: ${escapeHtml(scopes)}.</p>
+          <p class="api-key-secret-note">Signing secrets are shown once at creation and cannot be viewed later. Keep API credentials in backend env vars or a secret manager, never in frontend code, chat, email, or screenshots.</p>
+        </div>
+        <div class="api-key-row-actions">
+          <button type="button" data-copy-value="${escapeAttribute(key.key_prefix ?? '')}" data-copy-label="Key prefix copied">Copy prefix</button>
+          ${isActive ? `<button type="button" data-api-key-revoke="${escapeAttribute(key.id)}">Revoke</button>` : ''}
+        </div>
+      </article>`
+    }).join('')
+  })
+}
+
+function renderHomeApiKeySummary(keys = dashboardApiKeys) {
+  const list = document.querySelector('[data-home-api-key-list]')
+  if (!list) return
+  const activeKeys = keys.filter((key) => key.status === 'active')
+  if (!activeKeys.length) {
+    list.hidden = true
+    list.innerHTML = ''
+    return
+  }
+
+  const visibleKeys = activeKeys.slice(0, 3)
+  const remaining = activeKeys.length - visibleKeys.length
+  list.hidden = false
+  list.innerHTML = `<p class="portal-label">${activeKeys.length} active API ${activeKeys.length === 1 ? 'key' : 'keys'}</p>
+    ${visibleKeys.map((key) => `<div class="home-api-key-row">
+      <code>${escapeHtml(key.key_prefix ?? 'No prefix')}</code>
+      <button type="button" data-copy-value="${escapeAttribute(key.key_prefix ?? '')}" data-copy-label="Key prefix copied">Copy prefix</button>
+    </div>`).join('')}
+    ${remaining > 0 ? `<p>${remaining} more ${remaining === 1 ? 'key' : 'keys'} in API docs.</p>` : ''}
+    <button class="dashboard-action-secondary" type="button" data-panel-target="api">Manage / revoke keys</button>`
+}
+
+function updateHomeApiKeyAction(keys = dashboardApiKeys) {
+  const button = document.querySelector('[data-home-api-key-action]')
+  if (!button) return
+  const activeCount = keys.filter((key) => key.status === 'active').length
+  if (activeCount > 0) {
+    button.textContent = 'Manage API keys'
+    button.dataset.apiKeyAction = 'manage'
+    return
+  }
+  button.textContent = 'Create API key'
+  button.dataset.apiKeyAction = 'create'
+}
+
+async function copyText(text, label = 'Copied') {
+  if (!text) return
+  await navigator.clipboard.writeText(text)
+  showToast(label)
 }
 
 function normalizeKycStatus(status) {
@@ -827,6 +993,30 @@ function feeFromBps(amount, bps) {
 function clamp(value, min, max) {
   if (!Number.isFinite(value)) return min
   return Math.min(Math.max(value, min), max)
+}
+
+function formatDashboardDate(value) {
+  if (!value) return 'unknown date'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'unknown date'
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date)
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function escapeAttribute(value) {
+  return escapeHtml(value).replace(/`/g, '&#96;')
 }
 
 function formatUsd(value) {

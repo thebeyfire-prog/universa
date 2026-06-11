@@ -65,7 +65,7 @@
 
             <div class="dashboard-action-row">
               <button class="dashboard-action-primary" type="button" data-kyc-action>Complete KYC</button>
-              <button class="dashboard-action-secondary" type="button" data-panel-target="api">Create API key</button>
+              <button class="dashboard-action-secondary" type="button" data-api-key-action="create" data-home-api-key-action>Create API key</button>
               <button class="dashboard-action-secondary" type="button" data-panel-target="fees">Set fees</button>
               <button class="dashboard-action-secondary" type="button" data-panel-target="webhooks">Add webhook</button>
             </div>
@@ -93,15 +93,20 @@
                   secret once, and use the key prefix for request logs.
                 </p>
                 <code data-api-key-preview>No key issued yet</code>
+                <div class="home-api-key-list" data-home-api-key-list hidden></div>
                 <div class="api-key-output" data-api-key-output hidden>
                   <p class="portal-label">One-time credentials</p>
                   <span>API key</span>
-                  <code id="created-api-key">Created key appears here once</code>
-                  <button type="button" data-copy-target="created-api-key" data-copy-label="API key copied">Copy API key</button>
+                  <code id="home-created-api-key" data-created-api-key>Created key appears here once</code>
+                  <button type="button" data-copy-target="home-created-api-key" data-copy-label="API key copied. Save it server-side.">Copy API key</button>
                   <span>Signing secret</span>
-                  <code id="created-api-secret">Created secret appears here once</code>
-                  <button type="button" data-copy-target="created-api-secret" data-copy-label="Signing secret copied">Copy secret</button>
-                  <p>Store these now. The signing secret is not returned again.</p>
+                  <code id="home-created-api-secret" data-created-api-secret>Created secret appears here once</code>
+                  <button type="button" data-copy-target="home-created-api-secret" data-copy-label="Signing secret copied. This is the only time it will be shown.">Copy secret once</button>
+                  <p>
+                    Save the API key and signing secret in your backend env vars or secret manager now.
+                    The signing secret works like a password, is never shown again, and should not go in chat,
+                    email, screenshots, mobile apps, or frontend code.
+                  </p>
                 </div>
               </article>
             </div>
@@ -220,9 +225,44 @@
             </div>
 
             <div class="dashboard-action-row">
-              <button class="dashboard-action-primary" type="button" data-api-key-action>Create API key</button>
+              <button class="dashboard-action-primary" type="button" data-api-key-action="create">Create API key</button>
               <button class="dashboard-action-secondary" data-copy-target="api-endpoint" type="button">Copy endpoint</button>
               <button class="dashboard-action-secondary" data-copy-target="llm-integration-brief" data-copy-label="LLM brief copied" type="button">Copy for LLM</button>
+            </div>
+
+            <div class="api-key-manager">
+              <div class="api-key-manager-header">
+                <div>
+                  <p class="portal-label">Server credentials</p>
+                  <h2>API keys</h2>
+                  <p>
+                    Create keys for backend servers only. The signing secret is shown once and cannot
+                    be viewed later, so copy it directly into a backend secret manager or environment
+                    variable before closing this page.
+                  </p>
+                </div>
+              </div>
+
+              <div class="api-key-output" data-api-key-output hidden>
+                <p class="portal-label">New key created</p>
+                <span>API key</span>
+                <code id="api-created-api-key" data-created-api-key>Created key appears here once</code>
+                <button type="button" data-copy-target="api-created-api-key" data-copy-label="API key copied. Save it server-side.">Copy API key</button>
+                <span>Signing secret</span>
+                <code id="api-created-api-secret" data-created-api-secret>Created secret appears here once</code>
+                <button type="button" data-copy-target="api-created-api-secret" data-copy-label="Signing secret copied. This is the only time it will be shown.">Copy secret once</button>
+                <p>
+                  Save this secret now. Existing keys only show their prefix after creation.
+                  Do not paste credentials into chat, email, screenshots, mobile apps, or frontend code.
+                </p>
+              </div>
+
+              <div class="api-key-list" data-api-key-list>
+                <div class="dashboard-empty-row">
+                  <strong>No API keys yet</strong>
+                  <span>Create a key after Account KYC is active. Copy credentials directly into a backend secret manager.</span>
+                </div>
+              </div>
             </div>
 
             <code id="api-endpoint">Loading...</code>
@@ -499,12 +539,12 @@ hex(hmac_sha256($UNIVERSA_API_SECRET, canonical_string))</pre>
             <div class="dashboard-action-row">
               <button class="dashboard-action-primary" type="button">Add endpoint</button>
               <button class="dashboard-action-secondary" type="button">Send test event</button>
-              <button class="dashboard-action-secondary" type="button">View signing secret</button>
+              <button class="dashboard-action-secondary" type="button">Rotate webhook secret</button>
             </div>
 
             <div class="dashboard-empty-row">
               <strong>No webhook endpoint connected</strong>
-              <span>Delivery status, failed events, retry attempts, and signing secrets will appear here after tenant data is connected.</span>
+              <span>Delivery status, failed events, retry attempts, and webhook secret controls will appear here after tenant data is connected.</span>
             </div>
           </section>
         </div>
