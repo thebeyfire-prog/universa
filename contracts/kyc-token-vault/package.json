@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "initialize:vault": "node scripts/initialize-vault.mjs",
     "test": "node --loader ./node_modules/ts-node/esm.mjs ./node_modules/mocha/bin/mocha -t 1000000 tests/**/*.ts"
   },
   "devDependencies": {
