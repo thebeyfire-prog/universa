@@ -2,7 +2,10 @@ create table if not exists public.tenant_reward_wallets (
   tenant_id text primary key references public.tenants(id) on delete cascade,
   wallet_provider text not null default 'privy'
     check (wallet_provider in ('privy', 'external')),
-  wallet_address text not null check (wallet_address ~ '^0x[0-9a-fA-F]{40}$'),
+  wallet_address text not null check (
+    wallet_address ~ '^0x[0-9a-fA-F]{40}$'
+    or wallet_address ~ '^[1-9A-HJ-NP-Za-km-z]{32,44}$'
+  ),
   privy_user_id text,
   privy_wallet_id text,
   custody_model text not null default 'user_embedded'
@@ -35,7 +38,10 @@ create table if not exists public.developer_reward_allocations (
   id uuid primary key default gen_random_uuid(),
   epoch_id uuid not null references public.developer_reward_epochs(id) on delete cascade,
   tenant_id text not null references public.tenants(id) on delete cascade,
-  wallet_address text not null check (wallet_address ~ '^0x[0-9a-fA-F]{40}$'),
+  wallet_address text not null check (
+    wallet_address ~ '^0x[0-9a-fA-F]{40}$'
+    or wallet_address ~ '^[1-9A-HJ-NP-Za-km-z]{32,44}$'
+  ),
   lifetime_settled_volume_usd numeric(36, 2) not null default 0
     check (lifetime_settled_volume_usd >= 0),
   epoch_settled_volume_usd numeric(36, 2) not null default 0
@@ -60,7 +66,10 @@ create table if not exists public.developer_reward_claims (
   id uuid primary key default gen_random_uuid(),
   epoch_id uuid not null references public.developer_reward_epochs(id) on delete restrict,
   tenant_id text not null references public.tenants(id) on delete cascade,
-  wallet_address text not null check (wallet_address ~ '^0x[0-9a-fA-F]{40}$'),
+  wallet_address text not null check (
+    wallet_address ~ '^0x[0-9a-fA-F]{40}$'
+    or wallet_address ~ '^[1-9A-HJ-NP-Za-km-z]{32,44}$'
+  ),
   cumulative_token_amount numeric(78, 0) not null
     check (cumulative_token_amount >= 0),
   claimed_token_amount numeric(78, 0) not null

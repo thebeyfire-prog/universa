@@ -60,6 +60,11 @@ returns, chargebacks, or revenue data. Those checks remain server-side:
 5. Compliance/risk review holds suspicious tenants.
 6. Rewards authority signs Solana releases for approved epoch allocations.
 
+Database triggers enforce the same boundary before any reward wallet, eligible
+allocation, or claim row can be written: the tenant must have active account
+KYC or approved KYB, and the reward wallet must be active for that tenant.
+Anonymous or unverified users cannot create token reward requests.
+
 ## Public Verification
 
 Publish these before claiming the vault is live:
