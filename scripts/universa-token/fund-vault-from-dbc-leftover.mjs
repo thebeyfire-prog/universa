@@ -191,12 +191,12 @@ async function buildAndMaybeSend(input) {
   } = input
 
   const pool = publicKey(arg(args, 'pool', launchRecord?.pool), '--pool')
-  const poolAccount = await dbc.pool.getPool(pool)
+  const poolAccount = await dbc.state.getPool(pool)
   if (!poolAccount) throw new Error(`DBC pool not found: ${pool.toBase58()}`)
 
-  const poolState = poolAccount.poolState
+  const poolState = poolAccount.poolState ?? poolAccount
   const configAddress = poolState.config
-  const poolConfig = await dbc.pool.getPoolConfig(configAddress)
+  const poolConfig = await dbc.state.getPoolConfig(configAddress)
   if (!poolConfig) throw new Error(`DBC pool config not found: ${configAddress.toBase58()}`)
 
   const mint = publicKey(arg(args, 'mint', poolState.baseMint?.toBase58?.() || launchRecord?.baseMint), '--mint')
@@ -231,7 +231,7 @@ async function buildAndMaybeSend(input) {
 
   const vaultAccount = await getAccount(connection, vault, 'confirmed', TOKEN_PROGRAM_ID).catch(() => null)
   if (!vaultAccount) {
-    throw new Error(
+    throw retryable(
       `Rewards vault token account does not exist yet: ${vault.toBase58()}. Initialize the Anchor vault before funding it.`,
     )
   }
