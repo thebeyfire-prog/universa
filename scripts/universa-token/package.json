@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dry-run": "node launch-dbc.mjs",
-    "launch": "node launch-dbc.mjs --execute"
+    "launch": "node launch-dbc.mjs --execute",
+    "fund-vault": "node fund-vault-from-dbc-leftover.mjs"
   },
   "dependencies": {
     "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.10",

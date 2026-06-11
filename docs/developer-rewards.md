@@ -89,7 +89,10 @@ program logic later.
 - Generate program keypair locally and keep it out of Git.
 - Deploy Anchor program to Solana.
 - Initialize vault with the UNV mint and max reward cap.
-- Transfer `5,000,000 UNV` to the vault token account.
+- Transfer `5,000,000 UNV` to the vault token account. After DBC migration,
+  `npm run token:fund-vault` builds a single transaction that withdraws the
+  Meteora leftover allocation and transfers the developer reward amount into
+  the Anchor vault token account.
 - Create the first reviewed reward epoch.
 - Publish verification addresses.
 - Remove upgrade authority only after final verification.

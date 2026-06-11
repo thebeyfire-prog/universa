@@ -13,5 +13,6 @@ contracts/artifacts/
 contracts/kyc-token-vault/target/
 launch/meteora-dbc/out/
 scripts/universa-token/.last-dbc-launch.json
+scripts/universa-token/.last-vault-fund.json
 supabase/.temp/
 supabase/supabase/

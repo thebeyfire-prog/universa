@@ -65,7 +65,7 @@ Current generated program id: `8uQrLVdn8geKdBPVJmoNWUyosN7xoQKxzjdWYpvrAZ3H`.
    - UNV mint
    - rewards authority public key
    - max total rewards in raw token units: `5000000000000`
-6. Transfer the 50% UNV developer rewards allocation to the generated vault token account.
+6. Transfer the 50% UNV developer rewards allocation to the generated vault token account. After DBC migration, `npm run token:fund-vault` builds a single transaction that withdraws the Meteora leftover allocation and transfers the developer reward amount into the Anchor vault token account.
 7. Create reward epochs with explicit caps.
 8. After final verification, make the program immutable by removing upgrade authority.
 9. Publish the program id, config PDA, vault token account, epoch accounts, upgrade-authority status, and relaunched mint.

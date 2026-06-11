@@ -13,7 +13,8 @@
     "deploy:functions": "npx supabase functions deploy platform-api --project-ref $SUPABASE_PROJECT_REF && npx supabase functions deploy dashboard-api --project-ref $SUPABASE_PROJECT_REF",
     "deploy:site": "npx wrangler pages deploy public --project-name universa",
     "smoke": "node scripts/smoke-test.mjs",
-    "token:dry-run": "npm --prefix scripts/universa-token run dry-run",
-    "token:launch": "npm --prefix scripts/universa-token run launch"
+    "token:dry-run": "npm --prefix scripts/universa-token run dry-run --",
+    "token:fund-vault": "npm --prefix scripts/universa-token run fund-vault --",
+    "token:launch": "npm --prefix scripts/universa-token run launch --"
   }
 }
