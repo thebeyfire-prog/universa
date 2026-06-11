@@ -962,11 +962,6 @@ button {
   margin-top: 24px;
 }
 
-.protocol-github-link-disabled {
-  cursor: not-allowed;
-  opacity: 0.72;
-}
-
 .contract-address-card {
   margin-top: 28px;
   display: flex;
@@ -2619,31 +2614,125 @@ pre {
 }
 
 .site-footer {
-  min-height: 96px;
+  padding: 84px 0 40px;
+  color: var(--white);
+}
+
+.footer-menu-card {
+  width: 100%;
+  padding: clamp(28px, 5vw, 56px);
+  border-radius: 42px;
+  background:
+    radial-gradient(circle at 14% 18%, rgba(174, 231, 255, 0.26), transparent 34%),
+    linear-gradient(135deg, #07140f 0%, #0b2a25 56%, #102f35 100%);
+  box-shadow: 0 34px 90px rgba(7, 20, 15, 0.26);
+  overflow: hidden;
+  position: relative;
+}
+
+.footer-menu-card::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  pointer-events: none;
+}
+
+.footer-menu-card::after {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  right: -160px;
+  top: -180px;
+  border-radius: 999px;
+  border: 1px solid rgba(174, 231, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(174, 231, 255, 0.08);
+  pointer-events: none;
+}
+
+.footer-menu-header {
+  position: relative;
+  z-index: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 20px;
-  color: var(--muted);
-  border-top: 1px solid var(--line);
+  gap: 28px;
+  margin-bottom: 42px;
 }
 
-.site-footer p {
+.footer-menu-header .brand {
+  color: var(--white);
+  font-size: clamp(28px, 4vw, 44px);
+}
+
+.footer-menu-header p {
+  max-width: 420px;
   margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: right;
 }
 
-.footer-links,
+.footer-links {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+.footer-links a {
+  color: var(--white);
+  font-family: var(--display);
+  font-size: clamp(38px, 8vw, 92px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.075em;
+  text-decoration: none;
+}
+
 .legal-nav {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.footer-links a,
 .legal-card a {
   color: var(--sky);
   font-weight: 800;
   text-decoration: none;
+}
+
+.footer-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: clamp(62px, 10vw, 104px);
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.footer-links a::after {
+  content: "↗";
+  color: var(--sky);
+  font-family: var(--sans);
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 900;
+  letter-spacing: 0;
+  transform: translateY(-4px);
+}
+
+.footer-links a[href^="#"]::after,
+.footer-links a[href^="/"]::after {
+  content: "→";
+}
+
+.footer-links a:last-child {
+  border-bottom: 0;
 }
 
 .legal-page {
@@ -2854,6 +2943,30 @@ pre {
   .button {
     min-height: 44px;
     padding: 0 16px;
+  }
+
+  .site-footer {
+    padding: 56px 0 28px;
+  }
+
+  .footer-menu-card {
+    border-radius: 30px;
+  }
+
+  .footer-menu-card::before {
+    inset: 12px;
+    border-radius: 22px;
+  }
+
+  .footer-menu-header {
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .footer-menu-header p {
+    max-width: none;
+    text-align: left;
   }
 
   .hero {
