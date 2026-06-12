@@ -5,9 +5,11 @@
   "scripts": {
     "dry-run": "node launch-dbc.mjs",
     "launch": "node launch-dbc.mjs --execute",
-    "fund-vault": "node fund-vault-from-dbc-leftover.mjs"
+    "fund-vault": "node fund-vault-from-dbc-leftover.mjs",
+    "team-lock": "node create-jupiter-team-lock.mjs"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
     "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.10",
     "@solana/spl-token": "0.4.14",
     "@solana/web3.js": "1.98.4",

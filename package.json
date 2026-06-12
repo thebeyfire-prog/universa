@@ -15,6 +15,7 @@
     "smoke": "node scripts/smoke-test.mjs",
     "token:dry-run": "npm --prefix scripts/universa-token run dry-run --",
     "token:fund-vault": "npm --prefix scripts/universa-token run fund-vault --",
+    "token:team-lock": "npm --prefix scripts/universa-token run team-lock --",
     "token:launch": "npm --prefix scripts/universa-token run launch --",
     "vault:init": "npm --prefix contracts/kyc-token-vault run initialize:vault --"
   }

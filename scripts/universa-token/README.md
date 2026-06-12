@@ -85,3 +85,37 @@ npm run fund-vault -- \
 The script requires the signer wallet to be the DBC `leftoverReceiver`. It
 transfers to the program-owned SPL token vault account, not directly to the
 program id. The Anchor vault must already be initialized.
+
+## Locking the Team Allocation
+
+The remaining team allocation is not a Meteora DBC vesting position because the
+DBC config launched with locked vesting set to zero. The transparent path is a
+separate Jupiter Lock escrow for `500,000 UNV`.
+
+Default schedule:
+
+- Jupiter Lock program: `LocpQgucEQHbqNABEYvBvwoxCPsSbG91A1QaQhQQqjn`
+- Amount: `500,000 UNV`
+- Recipient: `3MRMNHnDpLctCHJVfL3d9qHrkXTPFJeTUWVod11krpTj`
+- Cliff: `183 days`
+- Unlocks: `20` periods, every `30 days`
+- Per-period unlock: `25,000 UNV`
+- Recipient updates: disabled
+- Cancellation: disabled
+
+Dry run and simulate:
+
+```bash
+npm run team-lock
+```
+
+Create the lock only after the dry run succeeds:
+
+```bash
+npm run team-lock -- --execute --yes
+```
+
+The script writes the latest simulation or transaction record to
+`.last-team-lock.json`. It also creates an ignored escrow base signer at
+`.secrets/sol-wallets/unv-team-lock-base.json` so dry runs and execution use the
+same derived escrow address.
