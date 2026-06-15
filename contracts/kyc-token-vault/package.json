@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "initialize:vault": "node scripts/initialize-vault.mjs",
-    "test": "node --loader ./node_modules/ts-node/esm.mjs ./node_modules/mocha/bin/mocha -t 1000000 tests/**/*.ts"
+    "test": "mkdir -p target && test -f target/test-wallet.json || solana-keygen new --no-bip39-passphrase --force -o target/test-wallet.json && anchor test --validator legacy --provider.wallet target/test-wallet.json",
+    "test:mocha": "node --loader ./node_modules/ts-node/esm.mjs ./node_modules/mocha/bin/mocha -t 1000000 tests/**/*.ts"
   },
   "devDependencies": {
     "@coral-xyz/anchor": "^0.32.1",

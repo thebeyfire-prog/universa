@@ -45,6 +45,30 @@ export type PlatformCustomer = {
   provider: ProviderName | null
   provider_customer_id: string | null
   provider_kyc_status: string | null
+  provider_status_raw: string | null
+  last_provider_sync_at: string | null
+  kyc_started_at: string | null
+  kyc_active_at: string | null
+  kyc_rejected_at: string | null
+  metadata: Record<string, unknown>
+  created_at: string
+  updated_at: string
+}
+
+export type PlatformCustomerWallet = {
+  id: string
+  tenant_id: string
+  customer_id: string
+  wallet_provider: 'privy'
+  privy_app_id: string
+  privy_wallet_id: string
+  wallet_address: string
+  chain: 'solana'
+  custody_model: 'privy_server_wallet'
+  status: 'active' | 'held' | 'revoked'
+  assigned_at: string
+  exported_at: string | null
+  provider_payload: Record<string, unknown>
   metadata: Record<string, unknown>
   created_at: string
   updated_at: string

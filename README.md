@@ -16,6 +16,7 @@ Tenant-scoped fiat onramp, offramp, KYC, virtual account, quote, and transfer AP
 - Partner credentials stay inside Supabase Edge Functions.
 - Developers authenticate server requests with scoped API keys and HMAC signatures.
 - End customers are separate partner records and must reach active KYC before money movement.
+- Active customer KYC assigns an immutable Privy Solana server wallet. Virtual accounts settle on-ramp USDC to that wallet by default, and wallet export is brokered with Privy HPKE so Universa never stores plaintext keys.
 - POST operations require idempotency keys.
 - Platform fees are quoted explicitly and written to a double-entry fee ledger.
 - The sandbox uses a deterministic mock partner. Live partner access remains approval-gated.
@@ -25,6 +26,8 @@ Tenant-scoped fiat onramp, offramp, KYC, virtual account, quote, and transfer AP
 - Site: `https://universa-brm.pages.dev`
 - API: `https://pvuoslgpooqdvedynjok.supabase.co/functions/v1/platform-api`
 - OpenAPI contract: [`openapi.yaml`](./openapi.yaml)
+- Webhook guide: [`docs/webhooks.md`](./docs/webhooks.md)
+- Production readiness gates: [`docs/production-readiness.md`](./docs/production-readiness.md)
 - Solana-native developer rewards design: [`docs/developer-rewards.md`](./docs/developer-rewards.md)
 - Meteora DBC launch plan: [`docs/meteora-dbc-launch.md`](./docs/meteora-dbc-launch.md)
 
@@ -46,6 +49,29 @@ Sign it with `HMAC-SHA256` using the API secret. Send the result as
 
 API secrets are returned only when a key is created. They are not browser
 credentials and must not be included in frontend applications.
+
+## Webhooks
+
+Developers can create dashboard-managed webhook endpoints, receive a one-time
+`whsec_*` signing secret, send test events, rotate secrets, disable endpoints,
+and inspect recent delivery history.
+
+Outbound webhook signatures use:
+
+```text
+x-universa-signature = "v1=" + hex(hmac_sha256(webhook_secret, x-universa-timestamp + "." + raw_body))
+```
+
+The `webhook-delivery` Edge Function delivers due outbox rows, retries failures
+with backoff, and dead-letters after the max attempts. Configure
+`WEBHOOK_DELIVERY_TOKEN` and schedule the worker with:
+
+```bash
+curl -X POST "$SUPABASE_URL/functions/v1/webhook-delivery" \
+  -H "authorization: Bearer $WEBHOOK_DELIVERY_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{"limit":25}'
+```
 
 ## Development
 

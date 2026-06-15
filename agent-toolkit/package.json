@@ -1,0 +1,19 @@
+{
+  "name": "@universa/agent-toolkit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent-safe Universa API client, tool wrappers, and MCP stdio server.",
+  "bin": {
+    "universa-mcp": "./src/mcp-server.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./client": "./src/client.mjs",
+    "./tools": "./src/tools.mjs"
+  },
+  "scripts": {
+    "check": "node --check src/client.mjs && node --check src/tools.mjs && node --check src/mcp-server.mjs && node --check src/index.mjs && node --check examples/create-va-dry-run.mjs",
+    "smoke": "node scripts/smoke-agent-toolkit.mjs"
+  }
+}

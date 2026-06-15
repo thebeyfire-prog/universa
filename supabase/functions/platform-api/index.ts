@@ -155,6 +155,16 @@ async function routeRequest(
     return service.createKycSession(decodeURIComponent(kycMatch[1]))
   }
 
+  const walletMatch = path.match(/^\/v1\/customers\/([^/]+)\/wallet$/)
+  if (method === 'GET' && walletMatch) {
+    return service.getCustomerWallet(decodeURIComponent(walletMatch[1]))
+  }
+
+  const walletExportMatch = path.match(/^\/v1\/customers\/([^/]+)\/wallet\/export$/)
+  if (method === 'POST' && walletExportMatch) {
+    return service.exportCustomerWallet(decodeURIComponent(walletExportMatch[1]), body)
+  }
+
   const virtualAccountMatch = path.match(
     /^\/v1\/customers\/([^/]+)\/virtual-accounts$/,
   )
@@ -183,6 +193,12 @@ function scopeFor(method: string, path: string): string | null {
   }
   if (method === 'POST' && /^\/v1\/customers\/[^/]+\/kyc-sessions$/.test(path)) {
     return 'kyc:write'
+  }
+  if (method === 'GET' && /^\/v1\/customers\/[^/]+\/wallet$/.test(path)) {
+    return 'customer_wallets:read'
+  }
+  if (method === 'POST' && /^\/v1\/customers\/[^/]+\/wallet\/export$/.test(path)) {
+    return 'customer_wallets:export'
   }
   if (method === 'POST' && /^\/v1\/customers\/[^/]+\/virtual-accounts$/.test(path)) {
     return 'virtual_accounts:write'

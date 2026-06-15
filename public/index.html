@@ -2,16 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta
       name="description"
       content="Universa gives developers one API for compliant ACH, stablecoin, virtual account, KYC, quote, transfer, and payout rails."
     />
+    <link rel="canonical" href="https://universarails.xyz/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Universa" />
+    <meta property="og:title" content="Universa | Fiat and stablecoin rails for developers" />
+    <meta
+      property="og:description"
+      content="Universa gives developers one API for compliant ACH, stablecoin, virtual account, KYC, quote, transfer, and payout rails."
+    />
+    <meta property="og:url" content="https://universarails.xyz/" />
+    <meta property="og:image" content="https://universarails.xyz/assets/universa-box-hands-logo.jpg" />
+    <meta property="og:image:secure_url" content="https://universarails.xyz/assets/universa-box-hands-logo.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="420" />
+    <meta property="og:image:height" content="420" />
+    <meta property="og:image:alt" content="Universa oil hands logo" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Universa | Fiat and stablecoin rails for developers" />
+    <meta
+      name="twitter:description"
+      content="Universa gives developers one API for compliant ACH, stablecoin, virtual account, KYC, quote, transfer, and payout rails."
+    />
+    <meta name="twitter:image" content="https://universarails.xyz/assets/universa-box-hands-logo.jpg" />
+    <meta name="twitter:image:alt" content="Universa oil hands logo" />
     <meta name="theme-color" content="#aee7ff" />
     <title>Universa | Fiat and stablecoin rails for developers</title>
-    <link rel="icon" href="/assets/universa-logo-mark.svg" />
-    <link rel="stylesheet" href="/styles.css" />
-    <script type="module" src="/app.js"></script>
+    <link rel="icon" href="/assets/universa-box-hands-logo.jpg" type="image/jpeg" />
+    <link rel="apple-touch-icon" href="/assets/universa-box-hands-logo.jpg" />
+    <link rel="stylesheet" href="/styles.css?v=20260613-63" />
+    <script type="module" src="/app.js?v=20260613-63"></script>
   </head>
   <body>
     <header class="site-header" aria-label="Universa navigation">
@@ -22,12 +46,12 @@
         <a href="#product">Product</a>
         <a href="#coverage">Coverage</a>
         <a href="#pricing">Pricing</a>
-        <a href="#protocol">Protocol</a>
+        <a href="#protocol">$UNV</a>
         <a href="#security">Security</a>
       </nav>
       <div class="header-actions">
         <a class="handle-link" href="https://x.com/UniversaRails" rel="noreferrer">@UniversaRails</a>
-        <button class="button button-dark header-auth" data-auth-button>Sign in</button>
+        <button class="button button-dark google-auth-button header-auth" data-auth-button>Sign in with Google</button>
       </div>
     </header>
 
@@ -41,11 +65,11 @@
           </h1>
           <p class="hero-subtitle reveal">
             Add ACH deposits, hosted KYC, virtual accounts, quote locks,
-            local payouts, and Base USDC settlement without handing provider
+            local payouts, and Solana USDC settlement without handing provider
             credentials to every app you ship.
           </p>
           <div class="hero-actions reveal">
-            <button class="button button-dark" data-auth-button>Continue with Google</button>
+            <button class="button button-dark google-auth-button" data-auth-button>Sign in with Google</button>
             <a class="button button-light" href="#quote">Try the quote</a>
           </div>
           <p class="rotating-line" id="rotating-line" aria-live="polite">
@@ -69,7 +93,7 @@
                   USD
                 </span>
               </div>
-              <label class="amount-input" for="quote-amount">
+              <label class="amount-input send-input" for="quote-amount">
                 <input
                   id="quote-amount"
                   type="number"
@@ -131,10 +155,15 @@
                 </div>
               </div>
               <div class="quote-info-row">
-                <span class="meta-icon meta-icon-usdc" aria-hidden="true">USDC</span>
+                <span class="meta-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M4 10.2 12 5l8 5.2"></path>
+                    <path d="M5.4 10.6h13.2M7 10.6v7M11 10.6v7M15 10.6v7M19 19H5"></path>
+                  </svg>
+                </span>
                 <div class="quote-info-copy">
-                  <p>Settlement</p>
-                  <strong>Base USDC wallet</strong>
+                  <p>Destination</p>
+                  <strong id="quote-destination">MXN SPEI bank</strong>
                 </div>
               </div>
             </div>
@@ -157,7 +186,7 @@
         <span>Mexico SPEI</span>
         <span>Brazil PIX</span>
         <span>Colombia bank</span>
-        <span>Base settlement</span>
+        <span>Solana settlement</span>
       </section>
 
       <section class="section-shell intro-section" id="product">
@@ -170,31 +199,125 @@
           <span><img src="https://flagcdn.com/w80/gb.png" alt="" />GBP</span>
         </div>
 
-        <div class="section-heading centered">
-          <p class="kicker">One API, many rails</p>
-          <h2 class="animated-copy">
-            Build the money movement layer once. Let Universa handle the regulated edges.
-          </h2>
-          <p>
-            Create customers, open provider-hosted KYC, issue virtual deposit
-            details, quote every route, attach your markup, and settle approved
-            transfers through institutional LPs and partner banks.
-          </p>
+        <div class="use-case-intro">
+          <div class="use-case-visual" aria-hidden="true">
+            <img class="use-case-logo" src="/assets/universa-box-hands-logo.jpg?v=20260613" width="160" height="160" alt="" decoding="async" />
+          </div>
+          <div class="section-heading centered">
+            <p class="kicker">One API, many rails</p>
+            <h2 class="animated-copy">
+              Build the money movement layer once. Let Universa handle the regulated edges.
+            </h2>
+            <p>
+              Create customers, open provider-hosted KYC, issue virtual deposit
+              details, quote every route, attach your markup, and settle approved
+              transfers through institutional LPs and partner banks.
+            </p>
+          </div>
+        </div>
+
+        <div class="use-case-grid" aria-label="Products you can build with Universa">
+          <article class="use-case-card reveal">
+            <figure class="use-case-image">
+              <img src="/assets/usecase-remittance-app.jpg" width="1200" height="675" loading="lazy" decoding="async" alt="A person showing a phone to a family member outside a neighborhood grocer" />
+            </figure>
+            <div class="use-case-copy">
+              <span>Remit</span>
+              <h3>Remittance app</h3>
+              <p>Let users fund in dollars, quote local currency, and send to family through compliant payout routes.</p>
+            </div>
+          </article>
+          <article class="use-case-card reveal">
+            <figure class="use-case-image">
+              <img src="/assets/usecase-global-payroll.jpg" width="1200" height="800" loading="lazy" decoding="async" alt="Workers reviewing payroll on a phone at a construction site" />
+            </figure>
+            <div class="use-case-copy">
+              <span>Pay</span>
+              <h3>Global payroll</h3>
+              <p>Pay international contractors with KYC-gated accounts, stablecoin settlement, and local bank payouts.</p>
+            </div>
+          </article>
+          <article class="use-case-card reveal">
+            <figure class="use-case-image">
+              <img src="/assets/usecase-creator-payouts.jpg" width="1200" height="640" loading="lazy" decoding="async" alt="Creators checking a payout at an outdoor market" />
+            </figure>
+            <div class="use-case-copy">
+              <span>Creator</span>
+              <h3>Creator payouts</h3>
+              <p>Move marketplace earnings to creators across wallets, USD accounts, and supported local rails.</p>
+            </div>
+          </article>
+          <article class="use-case-card reveal">
+            <figure class="use-case-image">
+              <img src="/assets/usecase-stablecoin-wallet.jpg" width="1200" height="800" loading="lazy" decoding="async" alt="A traveler checking a wallet on a balcony while packing" />
+            </figure>
+            <div class="use-case-copy">
+              <span>Wallet</span>
+              <h3>Stablecoin wallet</h3>
+              <p>Add fiat deposits, virtual accounts, and USDC settlement to a consumer or business wallet.</p>
+            </div>
+          </article>
+          <article class="use-case-card reveal">
+            <figure class="use-case-image">
+              <img src="/assets/usecase-marketplace-disbursements.jpg" width="1200" height="800" loading="lazy" decoding="async" alt="Marketplace sellers reviewing payout details while packing orders" />
+            </figure>
+            <div class="use-case-copy">
+              <span>Market</span>
+              <h3>Marketplace disbursements</h3>
+              <p>Route seller payouts with signed transfers, fee controls, idempotency, and audit-ready records.</p>
+            </div>
+          </article>
+          <article class="use-case-card reveal">
+            <figure class="use-case-image">
+              <img src="/assets/usecase-usd-accounts.jpg" width="1200" height="800" loading="lazy" decoding="async" alt="An international traveler checking an account on a phone in a transit hall" />
+            </figure>
+            <div class="use-case-copy">
+              <span>USD</span>
+              <h3>USD accounts for international users</h3>
+              <p>Give approved users a dollar funding route and digital-dollar balance without stitching providers together.</p>
+            </div>
+          </article>
         </div>
 
         <div class="feature-row">
           <article class="feature-card reveal">
-            <div class="feature-icon">KYC</div>
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <path d="M16 4.5L25 8V15.2C25 21.1 21.3 26.1 16 28C10.7 26.1 7 21.1 7 15.2V8L16 4.5Z" />
+                <path d="M12.1 14.4C12.1 12.2 13.8 10.7 16 10.7C18.2 10.7 19.9 12.2 19.9 14.4C19.9 16.5 18.2 18 16 18C13.8 18 12.1 16.5 12.1 14.4Z" />
+                <path d="M10.7 23.1C12 20.8 13.8 19.6 16 19.6C17.2 19.6 18.3 19.9 19.2 20.6" />
+                <path d="M20.4 22.7L22.1 24.3L25 20.7" />
+              </svg>
+            </div>
             <h3>Customer onboarding</h3>
             <p>Money movement stays locked until the real end user or business is approved.</p>
           </article>
           <article class="feature-card reveal">
-            <div class="feature-icon">ACH</div>
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <path d="M5.5 13.2H26.5" />
+                <path d="M7.4 24.8H24.6" />
+                <path d="M9 13.2V24.8" />
+                <path d="M16 13.2V24.8" />
+                <path d="M23 13.2V24.8" />
+                <path d="M4.8 10L16 4.7L27.2 10V13.2H4.8V10Z" />
+                <path d="M12.4 10.1H19.6" />
+              </svg>
+            </div>
             <h3>Virtual accounts</h3>
             <p>Reusable bank details accept fiat deposits and route settlement to USDC or local payout rails.</p>
           </article>
           <article class="feature-card reveal">
-            <div class="feature-icon">API</div>
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <path d="M8 7.5H18.5L24 13V24.5H8V7.5Z" />
+                <path d="M18.5 7.5V13H24" />
+                <path d="M12 17H20" />
+                <path d="M12 21H17" />
+                <path d="M5 20.2L2.8 18L5 15.8" />
+                <path d="M27 15.8L29.2 18L27 20.2" />
+              </svg>
+            </div>
             <h3>Quote and transfer</h3>
             <p>Lock rate, partner cost, Universa fee, and tenant markup before the signed transfer is created.</p>
           </article>
@@ -222,7 +345,7 @@
               rails, KYC gates, quotes, transfer signing, and fee model before
               committing to enterprise contracts.
             </p>
-            <button class="button button-sky" data-auth-button>Start testing</button>
+            <button class="button button-dark google-auth-button" data-auth-button>Sign in with Google</button>
           </div>
 
           <div class="comparison-card reveal">
@@ -234,7 +357,7 @@
               <label>
                 Primary corridor
                 <select aria-label="Primary corridor">
-                  <option>USD to Base USDC</option>
+                  <option>USD to Solana USDC</option>
                   <option>USD to MXN bank payout</option>
                   <option>USD to BRL PIX</option>
                   <option>USD to COP bank payout</option>
@@ -251,7 +374,9 @@
                 <span>Rails</span>
               </div>
               <article class="provider-column highlighted">
-                <div class="provider-badge">U</div>
+                <div class="provider-badge provider-badge-logo">
+                  <img src="/assets/universa-box-hands-logo.jpg" width="420" height="420" loading="lazy" decoding="async" alt="Universa hands and box logo" />
+                </div>
                 <h3>Universa</h3>
                 <strong>$0 to test</strong>
                 <p>No monthly minimum</p>
@@ -302,7 +427,7 @@
           <h3>Local payout routes</h3>
           <p>
             Start with the corridors customers ask for first: USD, MXN, BRL,
-            COP, EUR, GBP, and Base USDC settlement behind one quote response.
+            COP, EUR, GBP, and Solana USDC settlement behind one quote response.
           </p>
           <div class="card-visual rail-visual" aria-hidden="true">
             <span>MXN</span><span>BRL</span><span>COP</span><span>USDC</span>
@@ -393,24 +518,24 @@
       <section class="token-section" id="protocol">
         <div class="section-shell token-shell">
           <div class="section-heading token-heading">
-            <p class="kicker">Universa Protocol</p>
-            <h2 class="animated-copy">A protocol model built around real platform usage.</h2>
+            <p class="kicker">$UNV</p>
+            <h2 class="animated-copy">A usage-backed incentive layer for Universa rails.</h2>
             <p>
-              The Universa Protocol is a Solana-native rewards vault for
-              approved developers that move real platform volume. Public
-              liquidity, developer incentives, and vested team supply stay
-              separated from day one.
+              UNV is the network token for Universa rails: a Solana-native
+              reward system for approved developers building on the platform,
+              paired with public liquidity and future fee-funded market
+              buybacks as real transaction volume grows.
             </p>
             <div class="contract-address-card reveal" aria-label="UNV contract address">
               <div>
-                <span>UNV CA</span>
+                <span>Contract address</span>
                 <strong id="unv-contract-address">9Z5r1ifXHw8aoMHxYsQavghxjHLMPQK9sjrwDjDR9sQq</strong>
               </div>
               <div class="contract-address-actions">
                 <button
                   type="button"
                   data-copy-target="unv-contract-address"
-                  data-copy-label="UNV CA copied"
+                  data-copy-label="Contract address copied"
                 >
                   Copy
                 </button>
@@ -434,12 +559,12 @@
           <div class="token-grid">
             <article class="token-card token-card-featured reveal">
               <span>01 / supply</span>
-              <h3>10M fixed supply, 50% developer rewards</h3>
+              <h3>10M fixed supply, split before launch</h3>
               <p>
-                The launch plan creates 10,000,000 total UNV, puts 4,500,000
-                into public DBC liquidity, reserves 5,000,000 for a Solana
-                Anchor developer rewards vault, and keeps 500,000 for vested
-                team ownership. There is no separate marketing fund.
+                The launch plan creates 10,000,000 total UNV. The public DBC
+                float receives 4,500,000 UNV, the developer rewards vault
+                receives 5,000,000 UNV, and 500,000 UNV is locked for team
+                vesting. There is no separate marketing allocation.
               </p>
               <div class="allocation-bars" aria-label="Token allocation">
                 <div style="--bar:45%"><b>Public float</b><i></i><em>4.5M</em></div>
@@ -449,54 +574,137 @@
             </article>
 
             <article class="token-card reveal">
-              <span>02 / launch</span>
-              <h3>USDC-quoted Solana launch liquidity</h3>
+              <span>02 / how it is made</span>
+              <h3>Solana mint, Meteora DBC, USDC quote</h3>
               <p>
-                Public liquidity is quoted in USDC so pricing, depth, and market
-                activity are easy to follow. The launch float is separate from
-                developer rewards and vested allocations.
+                The launch flow creates the UNV mint through Meteora Dynamic
+                Bonding Curve, quotes public liquidity in USDC, migrates to
+                DAMM v2, then withdraws the reserved allocation into the
+                dedicated rewards vault and team lock.
               </p>
             </article>
 
             <article class="token-card reveal">
-              <span>03 / developers</span>
-              <h3>Rewards move through an Anchor vault</h3>
+              <span>03 / why it exists</span>
+              <h3>Reward real integration risk</h3>
               <p>
-                The vault is a Solana program-owned SPL token account. Epochs
-                have hard caps, each developer can claim once per epoch, and
-                there is no generic admin withdraw path.
+                Developers who take on bank, stablecoin, KYC, quote, and payout
+                integration work should have a visible upside path tied to real
+                settled volume, not anonymous wallet farming.
               </p>
             </article>
 
             <article class="token-card reveal">
-              <span>04 / access</span>
-              <h3>Eligibility stays off-chain</h3>
+              <span>04 / rewards vault</span>
+              <h3>Claims are capped and KYC-gated</h3>
               <p>
-                KYB, risk review, settled USD volume, returns, chargebacks, and
-                fraud signals are checked server-side before Universa signs a
-                reward release.
+                The 5,000,000 UNV reward pool lives in a Solana program-owned
+                token account. Epochs have fixed caps, claims are matched to the
+                assigned tenant wallet, and KYB/KYC approval is required before
+                rewards can be released.
               </p>
             </article>
 
-            <article class="token-card reveal">
-              <span>05 / liquidity</span>
-              <h3>Liquidity designed to stay aligned</h3>
+            <article class="token-card token-buyback reveal">
+              <span>05 / buybacks</span>
+              <h3>Revenue-funded market purchases</h3>
               <p>
-                The public float and liquidity policy are designed for durable
-                market access, transparent execution, and long-term alignment
-                between developers and network users.
+                Buybacks are separate from the developer vault. As Universa
+                earns net platform fee revenue from transfer, FX, settlement,
+                and tenant volume, a disclosed share can be routed into
+                open-market UNV purchases with transaction records by period.
               </p>
+              <ul class="token-policy-list">
+                <li>Funded only from realized Universa revenue.</li>
+                <li>Does not reduce the 5M UNV rewards vault.</li>
+                <li>Published by epoch with amount, route, and transaction hash.</li>
+              </ul>
             </article>
 
             <article class="token-card token-rewards reveal">
               <span>06 / verification</span>
-              <h3>Rewards are inspectable on Solana</h3>
+              <h3>Reward releases stay inspectable</h3>
               <p>
                 Anyone can inspect the program id, config PDA, vault token
-                account, reward epoch accounts, and claim accounts. The
-                no-withdraw story is complete only after upgrade authority is
-                removed.
+                account, reward epoch accounts, and claim accounts. Reward
+                releases are capped, recipient-bound, and recorded on-chain
+                so the vault cannot move outside the published flow.
               </p>
+              <div class="vault-live-panel" aria-label="Live UNV rewards vault metrics">
+                <div class="vault-live-stat">
+                  <span>Vault balance</span>
+                  <strong data-unv-vault-balance>5,000,000 UNV</strong>
+                  <em data-unv-vault-balance-status>Reading Solana vault account</em>
+                </div>
+                <div class="vault-live-stat">
+                  <span>Vault value</span>
+                  <strong data-unv-vault-value>$--</strong>
+                  <em data-unv-price-source>Loading live price snapshot</em>
+                </div>
+                <div class="vault-live-stat">
+                  <span>UNV price</span>
+                  <strong data-unv-price>$--</strong>
+                  <em data-unv-price-updated>Watching live token prices</em>
+                </div>
+              </div>
+              <div class="vault-address-grid" aria-label="UNV on-chain verification addresses">
+                <div class="vault-address-row">
+                  <span>Program ID</span>
+                  <strong id="unv-program-id">8uQrLVdn8geKdBPVJmoNWUyosN7xoQKxzjdWYpvrAZ3H</strong>
+                  <div class="vault-address-actions">
+                    <button type="button" data-copy-target="unv-program-id" data-copy-label="Program ID copied">Copy</button>
+                    <a href="https://solscan.io/account/8uQrLVdn8geKdBPVJmoNWUyosN7xoQKxzjdWYpvrAZ3H" rel="noreferrer">Solscan</a>
+                  </div>
+                </div>
+                <div class="vault-address-row">
+                  <span>UNV mint</span>
+                  <strong id="unv-mint-address">9Z5r1ifXHw8aoMHxYsQavghxjHLMPQK9sjrwDjDR9sQq</strong>
+                  <div class="vault-address-actions">
+                    <button type="button" data-copy-target="unv-mint-address" data-copy-label="UNV mint copied">Copy</button>
+                    <a href="https://solscan.io/token/9Z5r1ifXHw8aoMHxYsQavghxjHLMPQK9sjrwDjDR9sQq" rel="noreferrer">Solscan</a>
+                  </div>
+                </div>
+                <div class="vault-address-row">
+                  <span>Config PDA</span>
+                  <strong id="unv-config-pda">3JbxLzUF9Cwz8PQLkVbcvkHdww52Q4UfpUQjBzSDeF2n</strong>
+                  <div class="vault-address-actions">
+                    <button type="button" data-copy-target="unv-config-pda" data-copy-label="Config PDA copied">Copy</button>
+                    <a href="https://solscan.io/account/3JbxLzUF9Cwz8PQLkVbcvkHdww52Q4UfpUQjBzSDeF2n" rel="noreferrer">Solscan</a>
+                  </div>
+                </div>
+                <div class="vault-address-row">
+                  <span>Vault authority</span>
+                  <strong id="unv-vault-authority">7x715g3zig7nED4TTGCk1Vg43m2BHYRTBKMAUHf9EAiN</strong>
+                  <div class="vault-address-actions">
+                    <button type="button" data-copy-target="unv-vault-authority" data-copy-label="Vault authority copied">Copy</button>
+                    <a href="https://solscan.io/account/7x715g3zig7nED4TTGCk1Vg43m2BHYRTBKMAUHf9EAiN" rel="noreferrer">Solscan</a>
+                  </div>
+                </div>
+                <div class="vault-address-row">
+                  <span>Vault token account</span>
+                  <strong id="unv-vault-token-account">6DnZQZEgLAFeEBvF2BX4f523uhfsRDSoXyMPcEWWUG36</strong>
+                  <div class="vault-address-actions">
+                    <button type="button" data-copy-target="unv-vault-token-account" data-copy-label="Vault account copied">Copy</button>
+                    <a href="https://solscan.io/account/6DnZQZEgLAFeEBvF2BX4f523uhfsRDSoXyMPcEWWUG36" rel="noreferrer">Solscan</a>
+                  </div>
+                </div>
+                <div class="vault-address-row">
+                  <span>DBC config</span>
+                  <strong id="unv-dbc-config">8yLLEGrfsE9nvWQkuDDtJ5S2FW1Sep32Af3WnN6gtcCo</strong>
+                  <div class="vault-address-actions">
+                    <button type="button" data-copy-target="unv-dbc-config" data-copy-label="DBC config copied">Copy</button>
+                    <a href="https://solscan.io/account/8yLLEGrfsE9nvWQkuDDtJ5S2FW1Sep32Af3WnN6gtcCo" rel="noreferrer">Solscan</a>
+                  </div>
+                </div>
+                <div class="vault-address-row">
+                  <span>Vault fund tx</span>
+                  <strong id="unv-vault-fund-tx">3tszdLSQTgim6v5RJLyt7wBZEc1ff3BncaQecyw4bgtSRDocegSjb4Q4owqp1YcdVR6VqUSjqUP1TeqWiywVtZ7n</strong>
+                  <div class="vault-address-actions">
+                    <button type="button" data-copy-target="unv-vault-fund-tx" data-copy-label="Vault fund tx copied">Copy</button>
+                    <a href="https://solscan.io/tx/3tszdLSQTgim6v5RJLyt7wBZEc1ff3BncaQecyw4bgtSRDocegSjb4Q4owqp1YcdVR6VqUSjqUP1TeqWiywVtZ7n" rel="noreferrer">Solscan</a>
+                  </div>
+                </div>
+              </div>
               <div class="rewards-flow" aria-label="Fee funded rewards flow">
                 <div>
                   <b>01</b>
@@ -520,6 +728,72 @@
                 </div>
               </div>
             </article>
+
+            <article class="token-card token-runway reveal">
+              <span>07 / vault runway</span>
+              <h3>Target a 4-6 year rewards runway, then let buybacks do separate work.</h3>
+              <p>
+                The vault lasts as long as epoch emissions stay disciplined.
+                At 5 UNV per $1,000 of settled monthly volume, $20M per month
+                uses 100,000 UNV per month and lasts about 4.2 years. Doubling
+                the rate at the same volume cuts runway to about 2.1 years.
+              </p>
+              <div class="runway-table-wrapper" aria-label="UNV developer rewards vault runway simulations">
+                <table class="runway-table">
+                  <thead>
+                    <tr>
+                      <th>Scenario</th>
+                      <th>Monthly volume</th>
+                      <th>Reward rate</th>
+                      <th>Monthly emission</th>
+                      <th>5M vault runway</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Early usage</td>
+                      <td>$1M</td>
+                      <td>5 UNV / $1K</td>
+                      <td>5,000 UNV</td>
+                      <td>83.3 years</td>
+                    </tr>
+                    <tr>
+                      <td>Growing usage</td>
+                      <td>$5M</td>
+                      <td>5 UNV / $1K</td>
+                      <td>25,000 UNV</td>
+                      <td>16.7 years</td>
+                    </tr>
+                    <tr>
+                      <td>High usage</td>
+                      <td>$20M</td>
+                      <td>5 UNV / $1K</td>
+                      <td>100,000 UNV</td>
+                      <td>4.2 years</td>
+                    </tr>
+                    <tr>
+                      <td>Aggressive</td>
+                      <td>$20M</td>
+                      <td>10 UNV / $1K</td>
+                      <td>200,000 UNV</td>
+                      <td>2.1 years</td>
+                    </tr>
+                    <tr>
+                      <td>Too hot</td>
+                      <td>$50M</td>
+                      <td>10 UNV / $1K</td>
+                      <td>500,000 UNV</td>
+                      <td>10 months</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="runway-note">
+                Recommendation: cap each epoch so the vault cannot emit more
+                than roughly 1.5-2.0% of the original vault per month without a
+                governance or internal treasury review.
+              </p>
+            </article>
           </div>
         </div>
       </section>
@@ -534,7 +808,7 @@
               Developers use tenant-scoped keys, signed requests, idempotency
               keys, and explicit scopes.
             </p>
-            <button class="button button-sky" data-auth-button>Open developer console</button>
+            <button class="button button-dark google-auth-button" data-auth-button>Sign in with Google</button>
           </div>
           <div class="code-window reveal">
             <div class="code-tabs">
@@ -545,7 +819,7 @@
   customer_id: <span class="code-string">"cus_9Kz..."</span>,
   source: { rail: <span class="code-string">"ach"</span>, currency: <span class="code-string">"USD"</span>, amount: <span class="code-string">"2500.00"</span> },
   destination: { rail: <span class="code-string">"spei"</span>, currency: <span class="code-string">"MXN"</span> },
-  settlement: { network: <span class="code-string">"base"</span>, asset: <span class="code-string">"USDC"</span> },
+  settlement: { network: <span class="code-string">"solana"</span>, asset: <span class="code-string">"USDC"</span> },
   platform_fee_bps: <span class="code-number">20</span>
 })</code></pre>
           </div>
@@ -578,7 +852,7 @@
           <article class="metric-card">
             <span class="portal-label">Modeled routes</span>
             <strong>6 rails</strong>
-            <p>ACH, wire, Base USDC, MXN SPEI, BRL PIX, and COP bank payout flows are available for testing.</p>
+            <p>ACH, wire, Solana USDC, MXN SPEI, BRL PIX, and COP bank payout flows are available for testing.</p>
           </article>
           <article class="metric-card">
             <span class="portal-label">Base fee</span>
@@ -597,7 +871,7 @@
               <h3>Reusable deposit details for approved customers.</h3>
               <p>
                 Create a customer, launch hosted KYC, then issue sandbox ACH or
-                wire instructions that settle to Base USDC or a configured
+                wire instructions that settle to Solana USDC or a configured
                 treasury account.
               </p>
             </div>
@@ -612,7 +886,7 @@
               </div>
               <div>
                 <span>Settlement</span>
-                <strong>Base USDC</strong>
+                <strong>Solana USDC</strong>
               </div>
               <div>
                 <span>Account type</span>

@@ -1,0 +1,4 @@
+-- Placeholder for a migration version already present in the linked remote
+-- Supabase project history. The original SQL is not present in this checkout.
+-- Keeping the version locally lets future db pushes compare migration history
+-- without rewriting the remote migration ledger.

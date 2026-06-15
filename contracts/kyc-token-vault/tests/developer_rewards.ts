@@ -9,7 +9,13 @@ import {
   getAssociatedTokenAddressSync,
   mintTo,
 } from '@solana/spl-token'
-import { Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
+import {
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  SYSVAR_RENT_PUBKEY,
+} from '@solana/web3.js'
 import assert from 'node:assert/strict'
 import idl from '../target/idl/kyc_token_vault.json' with { type: 'json' }
 import type { KycTokenVault } from '../target/types/kyc_token_vault'
@@ -40,6 +46,21 @@ function assertAnchorError(error: unknown, code: string): void {
   assert.match(text, new RegExp(code, 'i'))
 }
 
+async function fundLocalTestWallet(provider: anchor.AnchorProvider, wallet: PublicKey): Promise<void> {
+  const balance = await provider.connection.getBalance(wallet)
+  if (balance >= LAMPORTS_PER_SOL) return
+
+  const signature = await provider.connection.requestAirdrop(wallet, 10 * LAMPORTS_PER_SOL)
+  const latestBlockhash = await provider.connection.getLatestBlockhash()
+  await provider.connection.confirmTransaction(
+    {
+      signature,
+      ...latestBlockhash,
+    },
+    'confirmed',
+  )
+}
+
 describe('universa developer rewards vault', () => {
   const provider = anchor.AnchorProvider.env()
   anchor.setProvider(provider)
@@ -52,6 +73,8 @@ describe('universa developer rewards vault', () => {
   const developerB = Keypair.generate()
 
   it('enforces authority, caps, duplicate claims, freezing, and token transfers', async () => {
+    await fundLocalTestWallet(provider, payer.publicKey)
+
     const mint = await createMint(
       provider.connection,
       payer,
