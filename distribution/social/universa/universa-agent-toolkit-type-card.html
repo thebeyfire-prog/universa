@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1600, initial-scale=1">
+  <title>Universa Agent Toolkit</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 1600px;
+      height: 1600px;
+      overflow: hidden;
+      color: #f6f0e4;
+      background: #050807;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .poster {
+      position: relative;
+      width: 1600px;
+      height: 1600px;
+      padding: 78px 100px 66px;
+      background:
+        radial-gradient(circle at 82% 12%, rgba(12, 150, 98, 0.2), transparent 36%),
+        radial-gradient(circle at 18% 88%, rgba(194, 255, 230, 0.11), transparent 34%),
+        linear-gradient(180deg, #050807 0%, #07100d 62%, #020403 100%);
+    }
+
+    .poster::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.16;
+      background-image:
+        linear-gradient(rgba(246, 240, 228, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(246, 240, 228, 0.08) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.4), black 18%, black 74%, rgba(0, 0, 0, 0.4));
+    }
+
+    .topbar,
+    .hero,
+    .content,
+    .footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 54px;
+    }
+
+    .brand {
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 54px;
+      font-style: italic;
+      font-weight: 900;
+      line-height: 0.9;
+      color: #f6f0e4;
+    }
+
+    .release {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: #06100c;
+      background: #f6f0e4;
+      padding: 18px 28px;
+      border-radius: 999px;
+      box-shadow: 0 16px 46px rgba(0, 0, 0, 0.28);
+    }
+
+    .release span {
+      color: #0b8e62;
+    }
+
+    .eyebrow {
+      color: #bbffe8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 9px;
+      margin-bottom: 28px;
+      text-transform: uppercase;
+    }
+
+    .headline {
+      max-width: 1200px;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 96px;
+      font-style: italic;
+      font-weight: 900;
+      line-height: 0.9;
+      text-transform: uppercase;
+    }
+
+    .headline .mint {
+      color: #bbffe8;
+    }
+
+    .subhead {
+      max-width: 1180px;
+      margin-top: 30px;
+      color: #9ea9a2;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.18;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      margin-top: 52px;
+      grid-template-rows: 350px 258px;
+    }
+
+    .panel {
+      min-height: 0;
+      border: 1px solid rgba(246, 240, 228, 0.14);
+      border-radius: 30px;
+      background: rgba(246, 240, 228, 0.055);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      padding: 28px 32px;
+    }
+
+    .panel.light {
+      color: #06100c;
+      background: linear-gradient(135deg, #fff8eb 0%, #efe7d8 100%);
+      border-color: transparent;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    .label {
+      color: #bbffe8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 7px;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+
+    .light .label {
+      color: #0b664a;
+    }
+
+    .panel-title {
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1.0;
+      margin-bottom: 18px;
+    }
+
+    .body {
+      color: #aeb8b1;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.26;
+    }
+
+    .light .body {
+      color: #3f4842;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      color: #06100c;
+      background: #bbffe8;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .chip.dark {
+      color: #f6f0e4;
+      background: #07140f;
+    }
+
+    .flow {
+      display: grid;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 18px;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(246, 240, 228, 0.12);
+    }
+
+    .flow-row:last-child {
+      border-bottom: 0;
+    }
+
+    .step {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      color: #06100c;
+      background: #bbffe8;
+      border-radius: 50%;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .step-copy {
+      color: #f6f0e4;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 27px;
+      font-weight: 900;
+      line-height: 1.05;
+    }
+
+    .step-copy small {
+      display: block;
+      margin-top: 5px;
+      color: #87938c;
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .metric {
+      min-height: 104px;
+      padding: 17px;
+      border-radius: 20px;
+      background: rgba(7, 20, 15, 0.08);
+      border: 1px solid rgba(7, 20, 15, 0.09);
+    }
+
+    .metric strong {
+      display: block;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 11px;
+      color: #516056;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 36px;
+      align-items: end;
+      margin-top: 32px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(246, 240, 228, 0.15);
+    }
+
+    .footer-copy {
+      color: #f6f0e4;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1.06;
+    }
+
+    .footer-copy span {
+      color: #bbffe8;
+    }
+
+    .install {
+      color: #06100c;
+      background: #f6f0e4;
+      border-radius: 28px;
+      padding: 24px 28px;
+      min-width: 500px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.25;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+    }
+
+    .install b {
+      display: block;
+      margin-bottom: 8px;
+      color: #0b664a;
+      font-family: "Arial Black", Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <header class="topbar">
+      <div class="brand">universa</div>
+      <div class="release"><span>0.1.0</span> agent toolkit</div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">SDK + MCP SERVER</div>
+      <div class="headline">
+        Global payment processing for <span class="mint">agent-built apps.</span>
+      </div>
+      <div class="subhead">
+        Currencies, customer KYC, virtual accounts, quotes, transfers, webhooks, and stablecoin settlement behind one developer surface.
+      </div>
+    </section>
+
+    <section class="content">
+      <article class="panel light">
+        <div class="label">Currencies + rails</div>
+        <div class="panel-title">Local money in. Stablecoin settlement out.</div>
+        <div class="body">
+          Universa gives developers the pieces to route customer deposits, payouts, and transfer flows without wiring every bank, wallet, provider, and compliance state by hand.
+        </div>
+        <div class="chips">
+          <div class="chip dark">USD</div>
+          <div class="chip dark">MXN</div>
+          <div class="chip dark">BRL</div>
+          <div class="chip dark">EUR</div>
+          <div class="chip">USDC</div>
+          <div class="chip">SOLANA</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="label">Transfer workflow</div>
+        <div class="flow">
+          <div class="flow-row">
+            <div class="step">01</div>
+            <div class="step-copy">Create customer <small>Tenant-scoped user record with review state.</small></div>
+          </div>
+          <div class="flow-row">
+            <div class="step">02</div>
+            <div class="step-copy">Complete KYC <small>Approval gates wallets, VAs, and live movement.</small></div>
+          </div>
+          <div class="flow-row">
+            <div class="step">03</div>
+            <div class="step-copy">Quote + transfer <small>Draft first, execute only with explicit approval.</small></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="label">Agent controls</div>
+        <div class="panel-title">Dry-run by default. Live calls are explicit.</div>
+        <div class="body">
+          Agents can prepare requests, idempotency keys, route bodies, and status checks. Actual mutations require <span style="color:#bbffe8">execute=true</span>.
+        </div>
+      </article>
+
+      <article class="panel light">
+        <div class="label">Processing surface</div>
+        <div class="matrix">
+          <div class="metric">
+            <strong>VA</strong>
+            <span>Virtual account details after customer approval.</span>
+          </div>
+          <div class="metric">
+            <strong>FX</strong>
+            <span>Quote locks and route metadata for transfers.</span>
+          </div>
+          <div class="metric">
+            <strong>API</strong>
+            <span>Signed requests, webhooks, and event history.</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-copy">
+        Customer → KYC → wallet → virtual account → quote → transfer. <span>Built for developers and agents.</span>
+      </div>
+      <div class="install">
+        <b>install</b>
+        npm install @universarails/agent-toolkit
+      </div>
+    </footer>
+  </main>
+</body>
+</html>

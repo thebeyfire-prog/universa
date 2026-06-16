@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600" role="img" aria-labelledby="title desc">
+  <title id="title">Universa Agent Toolkit social card</title>
+  <desc id="desc">Black and off-white social card showing an AI profile, rail sidebar, and Universa Agent Toolkit copy.</desc>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="0.55" stop-color="#f4f0e7"/>
+      <stop offset="1" stop-color="#e5e0d6"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#bdf7de"/>
+      <stop offset="1" stop-color="#0c8d60"/>
+    </linearGradient>
+    <linearGradient id="inkFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#07140f" stop-opacity="0"/>
+      <stop offset="0.45" stop-color="#07140f" stop-opacity="0"/>
+      <stop offset="1" stop-color="#07140f" stop-opacity="0.75"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000000" flood-opacity="0.38"/>
+    </filter>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.04 0 0 0 0 0.88 0 0 0 0 0.58 0 0 0 .34 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="wordClip">
+      <text x="800" y="1444" text-anchor="middle"
+        font-family="Archivo Black, Arial Black, Helvetica, Arial, sans-serif"
+        font-size="194" font-style="italic" font-weight="900" letter-spacing="-16">universa</text>
+    </clipPath>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="2" fill="#f4f0e7" opacity="0.16"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="1600" fill="#050807"/>
+  <rect width="1600" height="1600" fill="url(#dots)"/>
+  <circle cx="1120" cy="454" r="430" fill="#0da56d" opacity="0.11"/>
+  <circle cx="428" cy="1128" r="360" fill="#99f6d7" opacity="0.06"/>
+
+  <g transform="translate(92 86)">
+    <text x="0" y="34" fill="#f4f0e7" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="38" font-style="italic" font-weight="900" letter-spacing="-2">universa</text>
+    <rect x="1268" y="0" width="152" height="54" rx="27" fill="#f4f0e7"/>
+    <text x="1344" y="35" fill="#050807" text-anchor="middle" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="17" font-weight="900" letter-spacing=".8">SDK LIVE</text>
+  </g>
+
+  <text x="116" y="212" fill="#c8fff0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" font-weight="700" letter-spacing="8">AGENTIC FINANCE RAILS</text>
+  <text x="112" y="326" fill="#f4f0e7" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="104" font-style="italic" font-weight="900" letter-spacing="-6">AGENTS</text>
+  <text x="112" y="428" fill="#f4f0e7" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="104" font-style="italic" font-weight="900" letter-spacing="-6">CAN RUN</text>
+  <text x="112" y="530" fill="#f4f0e7" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="104" font-style="italic" font-weight="900" letter-spacing="-6">RAILS</text>
+  <text x="112" y="632" fill="#f4f0e7" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="104" font-style="italic" font-weight="900" letter-spacing="-6">SAFELY.</text>
+
+  <g transform="translate(116 708)" filter="url(#shadow)">
+    <rect width="502" height="462" rx="42" fill="url(#paper)"/>
+    <text x="44" y="72" fill="#050807" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" font-weight="800" letter-spacing="5">TOOL CALL</text>
+    <text x="44" y="128" fill="#050807" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="38" font-weight="900" letter-spacing="-1.2">prepare payout</text>
+    <text x="44" y="169" fill="#050807" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="38" font-weight="900" letter-spacing="-1.2">account</text>
+    <g transform="translate(44 202)">
+      <rect width="414" height="54" rx="27" fill="#e7e2d8"/>
+      <text x="24" y="35" fill="#050807" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" font-weight="800">customer_id: cus_...</text>
+      <rect y="74" width="414" height="54" rx="27" fill="#d9f8ee"/>
+      <text x="24" y="109" fill="#050807" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" font-weight="800">dry_run: true</text>
+      <rect y="148" width="414" height="54" rx="27" fill="#07140f"/>
+      <text x="24" y="183" fill="#f4f0e7" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" font-weight="800">execute requires approval</text>
+    </g>
+    <line x1="44" y1="428" x2="458" y2="428" stroke="#050807" stroke-opacity="0.14"/>
+    <text x="44" y="452" fill="#050807" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="20" font-weight="900">no private keys in agent tools</text>
+  </g>
+
+  <g transform="translate(670 210)" filter="url(#shadow)">
+    <rect width="760" height="824" rx="58" fill="#0a100d" stroke="#f4f0e7" stroke-opacity="0.1"/>
+    <rect x="40" y="40" width="680" height="744" rx="42" fill="#0e1712"/>
+    <circle cx="396" cy="394" r="280" fill="#d8f7e7" opacity="0.13"/>
+    <path d="M373 193c72 0 139 32 183 88 43 55 59 129 42 202 40 41 64 78 64 106 0 22-17 38-43 40l-42 3c-15 60-57 106-124 119-63 12-133-10-183-58-49-47-77-116-77-191 0-171 74-309 180-309z" fill="url(#paper)"/>
+    <path d="M366 260c39 0 76 14 104 41 28 27 43 62 43 101 0 26-7 51-20 72l66 60h-85c-27 22-62 35-100 35-84 0-152-69-152-154s61-155 144-155z" fill="#0f5f43" opacity="0.28"/>
+
+    <g transform="translate(276 280)" stroke="#0a6449" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M58 105 135 54 223 90 286 35"/>
+      <path d="M58 105 117 190 223 90 247 185"/>
+      <path d="M135 54 117 190"/>
+      <path d="M223 90 117 190"/>
+      <circle cx="58" cy="105" r="24" fill="#bff3dd"/>
+      <circle cx="135" cy="54" r="20" fill="#f8f2e6"/>
+      <circle cx="223" cy="90" r="26" fill="#a5e7cc"/>
+      <circle cx="286" cy="35" r="19" fill="#f8f2e6"/>
+      <circle cx="117" cy="190" r="26" fill="#0d8b60"/>
+      <circle cx="247" cy="185" r="20" fill="#e9f8ef"/>
+    </g>
+
+    <g transform="translate(82 90)">
+      <rect width="232" height="164" rx="28" fill="url(#paper)"/>
+      <circle cx="72" cy="82" r="48" fill="none" stroke="#0c7d58" stroke-width="20"/>
+      <path d="M72 34a48 48 0 0 1 42 71" fill="none" stroke="#93d9bd" stroke-width="20"/>
+      <rect x="136" y="48" width="70" height="13" rx="6.5" fill="#0c7d58"/>
+      <rect x="136" y="78" width="50" height="13" rx="6.5" fill="#6fb997"/>
+      <rect x="136" y="108" width="76" height="13" rx="6.5" fill="#6fb997"/>
+    </g>
+
+    <g transform="translate(488 96)">
+      <rect width="190" height="190" rx="32" fill="#103f2f"/>
+      <rect x="36" y="100" width="30" height="48" rx="8" fill="#bff3dd"/>
+      <rect x="84" y="72" width="30" height="76" rx="8" fill="#8adbb8"/>
+      <rect x="132" y="48" width="30" height="100" rx="8" fill="#f8f2e6"/>
+      <polyline points="36,62 78,38 112,66 154,30" fill="none" stroke="#f4f0e7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g transform="translate(86 598)">
+      <rect width="270" height="132" rx="28" fill="#103f2f"/>
+      <text x="26" y="50" fill="#d8f7e7" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19" font-weight="900">USD IN</text>
+      <text x="26" y="91" fill="#f8f2e6" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="38" font-weight="900">$1,000</text>
+      <path d="M200 43h34m0 0-14-14m14 14-14 14" stroke="#c8fff0" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g transform="translate(398 598)">
+      <rect width="280" height="132" rx="28" fill="#f8f2e6"/>
+      <text x="26" y="50" fill="#0a100d" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19" font-weight="900">SETTLE</text>
+      <text x="26" y="91" fill="#0a100d" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="30" font-weight="900">SOLANA USDC</text>
+    </g>
+
+    <path d="M260 190 C365 96 528 186 588 320 C632 420 595 508 514 574" fill="none" stroke="#f4f0e7" stroke-opacity="0.72" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 28"/>
+    <circle cx="592" cy="324" r="18" fill="#c8fff0"/>
+    <circle cx="514" cy="574" r="18" fill="#c8fff0"/>
+  </g>
+
+  <g transform="translate(113 1218)">
+    <rect width="332" height="74" rx="37" fill="#f4f0e7"/>
+    <text x="166" y="49" fill="#050807" text-anchor="middle" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="28" font-weight="900">SDK + MCP SERVER</text>
+    <rect x="360" width="282" height="74" rx="37" fill="#102019" stroke="#f4f0e7" stroke-opacity="0.18"/>
+    <text x="501" y="49" fill="#c8fff0" text-anchor="middle" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="28" font-weight="900">DRY-RUN FIRST</text>
+    <rect x="670" width="352" height="74" rx="37" fill="#102019" stroke="#f4f0e7" stroke-opacity="0.18"/>
+    <text x="846" y="49" fill="#c8fff0" text-anchor="middle" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="28" font-weight="900">PAYOUT RAILS</text>
+  </g>
+
+  <g transform="translate(112 1328)">
+    <text x="0" y="0" fill="#f4f0e7" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="34" font-weight="900">Customer -> KYC -> Wallet -> VA -> Quote -> Transfer</text>
+    <text x="0" y="50" fill="#8f9c95" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="24" font-weight="900">Agents prep the flow. Humans control live mutations.</text>
+  </g>
+
+  <rect y="1210" width="1600" height="390" fill="url(#inkFade)"/>
+  <g transform="translate(466 1426)" filter="url(#softGlow)">
+    <rect width="668" height="100" rx="50" fill="#f4f0e7"/>
+    <rect width="668" height="100" rx="50" fill="url(#mint)" opacity="0.2"/>
+    <text x="334" y="69" text-anchor="middle"
+      font-family="Archivo Black, Arial Black, Helvetica, Arial, sans-serif"
+      font-size="86" font-style="italic" font-weight="900" letter-spacing="-7"
+      fill="#050807">universa</text>
+  </g>
+</svg>

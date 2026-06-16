@@ -1,11 +1,37 @@
 {
-  "name": "@universa/agent-toolkit",
+  "name": "@universarails/agent-toolkit",
   "version": "0.1.0",
-  "private": true,
-  "type": "module",
   "description": "Agent-safe Universa API client, tool wrappers, and MCP stdio server.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://universarails.xyz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thebeyfire-prog/universa.git",
+    "directory": "agent-toolkit"
+  },
+  "bugs": {
+    "url": "https://github.com/thebeyfire-prog/universa/issues"
+  },
+  "keywords": [
+    "universa",
+    "agent",
+    "mcp",
+    "payments",
+    "payouts",
+    "stablecoin",
+    "usdc",
+    "kyc",
+    "virtual-accounts"
+  ],
+  "files": [
+    "README.md",
+    "LICENSE",
+    "src",
+    "examples"
+  ],
   "bin": {
-    "universa-mcp": "./src/mcp-server.mjs"
+    "universa-mcp": "src/mcp-server.mjs"
   },
   "exports": {
     ".": "./src/index.mjs",

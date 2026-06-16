@@ -33,10 +33,16 @@ export UNIVERSA_API_SECRET="..."
 
 Read-only tools still require API credentials when they call Universa. Mutating tools can be previewed without credentials because they default to dry run.
 
+## Install
+
+```bash
+npm install @universarails/agent-toolkit
+```
+
 ## SDK Usage
 
 ```js
-import { createUniversaClient } from './agent-toolkit/src/index.mjs'
+import { createUniversaClient } from '@universarails/agent-toolkit'
 
 const universa = createUniversaClient()
 
@@ -47,7 +53,7 @@ console.log(wallet.body.customer_wallet.address)
 ## Agent Tool Usage
 
 ```js
-import { runUniversaAgentTool } from './agent-toolkit/src/index.mjs'
+import { runUniversaAgentTool } from '@universarails/agent-toolkit'
 
 const draft = await runUniversaAgentTool('universa_prepare_usdc_payout_account', {
   customer_id: 'cus_...',
