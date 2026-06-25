@@ -1,7 +1,10 @@
 const UNV_MINT = '9Z5r1ifXHw8aoMHxYsQavghxjHLMPQK9sjrwDjDR9sQq'
 const UNV_VAULT_TOKEN_ACCOUNT = '6DnZQZEgLAFeEBvF2BX4f523uhfsRDSoXyMPcEWWUG36'
 const UNV_VAULT_FALLBACK_BALANCE = 5_000_000
-const SOLANA_RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com'
+const SOLANA_RPC_ENDPOINTS = [
+  'https://solana-rpc.publicnode.com',
+  'https://api.mainnet-beta.solana.com',
+]
 const JUPITER_PRICE_ENDPOINT = 'https://lite-api.jup.ag/price/v3'
 
 export default {
@@ -66,18 +69,7 @@ async function handleUnvWallet(request) {
 }
 
 async function fetchVaultBalance() {
-  const response = await fetch(SOLANA_RPC_ENDPOINT, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: 'unv-vault-balance',
-      method: 'getTokenAccountBalance',
-      params: [UNV_VAULT_TOKEN_ACCOUNT],
-    }),
-  })
-  if (!response.ok) return null
-  const payload = await response.json()
+  const payload = await solanaRpc('unv-vault-balance', 'getTokenAccountBalance', [UNV_VAULT_TOKEN_ACCOUNT])
   const value = payload?.result?.value
   const amount = Number(value?.uiAmountString ?? value?.uiAmount)
   return Number.isFinite(amount) ? amount : null
@@ -115,20 +107,28 @@ async function fetchOwnerTokenBalance(owner, mint) {
 }
 
 async function solanaRpc(id, method, params) {
-  const response = await fetch(SOLANA_RPC_ENDPOINT, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id,
-      method,
-      params,
-    }),
-  })
-  if (!response.ok) throw new Error(`Solana RPC returned ${response.status}`)
-  const payload = await response.json()
-  if (payload?.error) throw new Error(payload.error.message ?? 'Solana RPC error')
-  return payload
+  let lastError = null
+  for (const endpoint of SOLANA_RPC_ENDPOINTS) {
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id,
+          method,
+          params,
+        }),
+      })
+      if (!response.ok) throw new Error(`${endpoint} returned ${response.status}`)
+      const payload = await response.json()
+      if (payload?.error) throw new Error(payload.error.message ?? 'Solana RPC error')
+      return payload
+    } catch (error) {
+      lastError = error
+    }
+  }
+  throw lastError ?? new Error('Solana RPC request failed')
 }
 
 async function fetchUnvPrice() {
