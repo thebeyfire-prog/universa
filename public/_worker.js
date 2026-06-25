@@ -5,6 +5,7 @@ const SOLANA_RPC_ENDPOINTS = [
   'https://solana-rpc.publicnode.com',
   'https://api.mainnet-beta.solana.com',
 ]
+const SOLANA_RPC_TIMEOUT_MS = 3_500
 const JUPITER_PRICE_ENDPOINT = 'https://lite-api.jup.ag/price/v3'
 
 export default {
@@ -72,7 +73,7 @@ async function fetchVaultBalance() {
   const payload = await solanaRpc('unv-vault-balance', 'getTokenAccountBalance', [UNV_VAULT_TOKEN_ACCOUNT])
   const value = payload?.result?.value
   const amount = Number(value?.uiAmountString ?? value?.uiAmount)
-  return Number.isFinite(amount) ? amount : null
+  return Number.isFinite(amount) && amount > 0 ? amount : null
 }
 
 async function fetchOwnerTokenBalance(owner, mint) {
@@ -109,10 +110,13 @@ async function fetchOwnerTokenBalance(owner, mint) {
 async function solanaRpc(id, method, params) {
   let lastError = null
   for (const endpoint of SOLANA_RPC_ENDPOINTS) {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), SOLANA_RPC_TIMEOUT_MS)
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           jsonrpc: '2.0',
           id,
@@ -126,6 +130,8 @@ async function solanaRpc(id, method, params) {
       return payload
     } catch (error) {
       lastError = error
+    } finally {
+      clearTimeout(timeout)
     }
   }
   throw lastError ?? new Error('Solana RPC request failed')
