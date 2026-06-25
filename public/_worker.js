@@ -1,28 +1,29 @@
 const UNV_MINT = '9Z5r1ifXHw8aoMHxYsQavghxjHLMPQK9sjrwDjDR9sQq'
 const UNV_VAULT_TOKEN_ACCOUNT = '6DnZQZEgLAFeEBvF2BX4f523uhfsRDSoXyMPcEWWUG36'
 const UNV_VAULT_FALLBACK_BALANCE = 5_000_000
-const SOLANA_RPC_ENDPOINTS = [
+const SOLANA_PUBLIC_RPC_ENDPOINTS = [
   'https://solana-rpc.publicnode.com',
   'https://api.mainnet-beta.solana.com',
 ]
 const SOLANA_RPC_TIMEOUT_MS = 3_500
 const JUPITER_PRICE_ENDPOINT = 'https://lite-api.jup.ag/price/v3'
+const JUPITER_HOLDINGS_ENDPOINT = 'https://lite-api.jup.ag/ultra/v1/holdings'
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url)
-    if (url.pathname === '/api/unv-vault') return handleUnvVault(request)
-    if (url.pathname === '/api/unv-wallet') return handleUnvWallet(request)
+    if (url.pathname === '/api/unv-vault') return handleUnvVault(request, env)
+    if (url.pathname === '/api/unv-wallet') return handleUnvWallet(request, env)
     return env.ASSETS?.fetch(request) ?? new Response('Not found', { status: 404 })
   },
 }
 
-async function handleUnvVault(request) {
+async function handleUnvVault(request, env) {
   if (request.method === 'OPTIONS') return json({}, 204)
   if (request.method !== 'GET') return json({ error: 'Method not allowed' }, 405)
 
   const [balanceResult, priceResult] = await Promise.allSettled([
-    fetchVaultBalance(),
+    fetchVaultBalance(env),
     fetchUnvPrice(),
   ])
   const liveBalance = balanceResult.status === 'fulfilled' ? balanceResult.value : null
@@ -43,7 +44,7 @@ async function handleUnvVault(request) {
   })
 }
 
-async function handleUnvWallet(request) {
+async function handleUnvWallet(request, env) {
   if (request.method === 'OPTIONS') return json({}, 204)
   if (request.method !== 'GET') return json({ error: 'Method not allowed' }, 405)
 
@@ -54,7 +55,7 @@ async function handleUnvWallet(request) {
   }
 
   try {
-    const balance = await fetchOwnerTokenBalance(owner, UNV_MINT)
+    const balance = await fetchOwnerTokenBalance(owner, UNV_MINT, env)
     return json({
       owner,
       mint: UNV_MINT,
@@ -69,19 +70,22 @@ async function handleUnvWallet(request) {
   }
 }
 
-async function fetchVaultBalance() {
-  const payload = await solanaRpc('unv-vault-balance', 'getTokenAccountBalance', [UNV_VAULT_TOKEN_ACCOUNT])
+async function fetchVaultBalance(env) {
+  const payload = await solanaRpc('unv-vault-balance', 'getTokenAccountBalance', [UNV_VAULT_TOKEN_ACCOUNT], env)
   const value = payload?.result?.value
   const amount = Number(value?.uiAmountString ?? value?.uiAmount)
   return Number.isFinite(amount) && amount > 0 ? amount : null
 }
 
-async function fetchOwnerTokenBalance(owner, mint) {
+async function fetchOwnerTokenBalance(owner, mint, env) {
+  const jupiterBalance = await fetchJupiterTokenBalance(owner, mint).catch(() => null)
+  if (jupiterBalance) return jupiterBalance
+
   const payload = await solanaRpc('unv-wallet-balance', 'getTokenAccountsByOwner', [
     owner,
     { mint },
     { encoding: 'jsonParsed', commitment: 'confirmed' },
-  ])
+  ], env)
   const accounts = Array.isArray(payload?.result?.value) ? payload.result.value : []
   let rawAmount = 0n
   let decimals = 0
@@ -107,16 +111,43 @@ async function fetchOwnerTokenBalance(owner, mint) {
   }
 }
 
-async function solanaRpc(id, method, params) {
+async function fetchJupiterTokenBalance(owner, mint) {
+  const response = await fetchWithTimeout(`${JUPITER_HOLDINGS_ENDPOINT}/${owner}`, {
+    headers: { accept: 'application/json' },
+  })
+  if (!response.ok) throw new Error(`Jupiter holdings returned ${response.status}`)
+  const payload = await response.json()
+  const accounts = Array.isArray(payload?.tokens?.[mint]) ? payload.tokens[mint] : []
+  let rawAmount = 0n
+  let decimals = 0
+
+  for (const account of accounts) {
+    const amount = String(account?.amount ?? '')
+    if (!/^\d+$/.test(amount)) continue
+    rawAmount += BigInt(amount)
+    const accountDecimals = Number(account?.decimals)
+    if (Number.isInteger(accountDecimals) && accountDecimals >= 0) decimals = accountDecimals
+  }
+
+  const uiAmountString = formatTokenAmount(rawAmount, decimals)
+  const balance = Number(uiAmountString)
+  return {
+    amount: rawAmount.toString(),
+    decimals,
+    balance: Number.isFinite(balance) ? balance : 0,
+    uiAmountString,
+    tokenAccountCount: accounts.length,
+    balanceSource: accounts.length > 0 ? 'jupiter_holdings' : 'no_account',
+  }
+}
+
+async function solanaRpc(id, method, params, env) {
   let lastError = null
-  for (const endpoint of SOLANA_RPC_ENDPOINTS) {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), SOLANA_RPC_TIMEOUT_MS)
+  for (const endpoint of solanaRpcEndpoints(env)) {
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetchWithTimeout(endpoint, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        signal: controller.signal,
         body: JSON.stringify({
           jsonrpc: '2.0',
           id,
@@ -130,11 +161,32 @@ async function solanaRpc(id, method, params) {
       return payload
     } catch (error) {
       lastError = error
-    } finally {
-      clearTimeout(timeout)
     }
   }
   throw lastError ?? new Error('Solana RPC request failed')
+}
+
+function solanaRpcEndpoints(env = {}) {
+  return Array.from(new Set([
+    env.MONET_SOLANA_RPC_URL,
+    env.SOLANA_RPC_URL,
+    env.SOLANA_RPC_FALLBACK_URL,
+    env.HELIUS_API_KEY ? `https://mainnet.helius-rpc.com/?api-key=${env.HELIUS_API_KEY}` : '',
+    ...SOLANA_PUBLIC_RPC_ENDPOINTS,
+  ].map((url) => String(url ?? '').trim()).filter(Boolean)))
+}
+
+async function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), SOLANA_RPC_TIMEOUT_MS)
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    })
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 async function fetchUnvPrice() {
