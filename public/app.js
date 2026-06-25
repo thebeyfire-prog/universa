@@ -11,12 +11,15 @@ const API_ENDPOINT =
 const DASHBOARD_API_ENDPOINT =
   'https://pvuoslgpooqdvedynjok.supabase.co/functions/v1/dashboard-api'
 const UNV_VAULT_ENDPOINT = '/api/unv-vault'
+const UNV_WALLET_ENDPOINT = '/api/unv-wallet'
 const UNV_MINT = '9Z5r1ifXHw8aoMHxYsQavghxjHLMPQK9sjrwDjDR9sQq'
 const UNV_VAULT_TOKEN_ACCOUNT = '6DnZQZEgLAFeEBvF2BX4f523uhfsRDSoXyMPcEWWUG36'
 const UNV_VAULT_FALLBACK_BALANCE = 5_000_000
 const TOKEN_PRICE_TOPIC = 'token-prices'
 const TOKEN_PRICE_WATCH_HEARTBEAT_MS = 25_000
 const UNV_VAULT_SNAPSHOT_POLL_MS = 15_000
+const PHANTOM_DOWNLOAD_URL = 'https://phantom.app/download'
+const PHANTOM_AUTO_CONNECT_STORAGE_KEY = 'universa:phantom-wallet:auto-connect'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 const monetSupabase = createClient(MONET_SUPABASE_URL, MONET_SUPABASE_ANON_KEY, {
@@ -143,6 +146,13 @@ let unvLiveVaultState = {
   vaultBalance: UNV_VAULT_FALLBACK_BALANCE,
   priceUsd: null,
 }
+let phantomWalletAdapter = null
+let phantomWalletState = {
+  status: 'idle',
+  address: '',
+  unvBalance: null,
+  message: 'Connect Phantom to read your UNV staking balance.',
+}
 let activateDashboardPanel = () => {}
 
 function updateVisualViewportWidth() {
@@ -246,6 +256,262 @@ function renderAuthButton(button, label, options = {}) {
     return
   }
   button.textContent = label
+}
+
+class PhantomWalletAdapter {
+  get provider() {
+    const phantomProvider = window.phantom?.solana
+    if (phantomProvider?.isPhantom) return phantomProvider
+    if (window.solana?.isPhantom) return window.solana
+    return null
+  }
+
+  get installed() {
+    return Boolean(this.provider)
+  }
+
+  async connect(options = {}) {
+    const provider = this.provider
+    if (!provider) throw new Error('Install Phantom to connect a Solana wallet.')
+    const response = await provider.connect(options)
+    return this.publicKeyToString(response?.publicKey ?? provider.publicKey)
+  }
+
+  async disconnect() {
+    await this.provider?.disconnect?.()
+  }
+
+  on(event, handler) {
+    this.provider?.on?.(event, handler)
+  }
+
+  publicKeyToString(publicKey) {
+    if (!publicKey) return ''
+    if (typeof publicKey === 'string') return publicKey
+    if (typeof publicKey.toString === 'function') return publicKey.toString()
+    return String(publicKey)
+  }
+}
+
+function initializePhantomWallet() {
+  phantomWalletAdapter = new PhantomWalletAdapter()
+  if (!document.querySelector('[data-wallet-button], [data-wallet-label], [data-wallet-unv-balance]')) return
+
+  if (!phantomWalletAdapter.installed) {
+    phantomWalletState = {
+      ...phantomWalletState,
+      status: 'missing',
+      message: 'Install Phantom to connect a Solana staking wallet.',
+    }
+    renderPhantomWalletState()
+    return
+  }
+
+  phantomWalletAdapter.on('connect', (publicKey) => {
+    const address = phantomWalletAdapter.publicKeyToString(publicKey ?? phantomWalletAdapter.provider?.publicKey)
+    if (address) syncConnectedPhantomWallet(address)
+  })
+  phantomWalletAdapter.on('disconnect', () => {
+    rememberPhantomAutoConnect(false)
+    phantomWalletState = {
+      status: 'idle',
+      address: '',
+      unvBalance: null,
+      message: 'Connect Phantom to read your UNV staking balance.',
+    }
+    renderPhantomWalletState()
+  })
+  phantomWalletAdapter.on('accountChanged', (publicKey) => {
+    const address = phantomWalletAdapter.publicKeyToString(publicKey)
+    if (address) syncConnectedPhantomWallet(address)
+    else disconnectPhantomWallet()
+  })
+
+  renderPhantomWalletState()
+  if (shouldRestorePhantomConnection() || phantomWalletAdapter.provider?.isConnected) {
+    connectPhantomWallet({ onlyIfTrusted: true, silent: true })
+  }
+}
+
+async function togglePhantomWallet() {
+  if (phantomWalletState.address) {
+    await disconnectPhantomWallet()
+    return
+  }
+  await connectPhantomWallet()
+}
+
+async function connectPhantomWallet(options = {}) {
+  if (!phantomWalletAdapter) phantomWalletAdapter = new PhantomWalletAdapter()
+  if (!phantomWalletAdapter.installed) {
+    phantomWalletState = {
+      ...phantomWalletState,
+      status: 'missing',
+      message: 'Install Phantom to connect a Solana staking wallet.',
+    }
+    renderPhantomWalletState()
+    window.open(PHANTOM_DOWNLOAD_URL, '_blank', 'noopener,noreferrer')
+    return
+  }
+
+  const silent = Boolean(options.silent)
+  phantomWalletState = {
+    ...phantomWalletState,
+    status: silent ? phantomWalletState.status : 'connecting',
+    message: silent ? phantomWalletState.message : 'Opening Phantom...',
+  }
+  renderPhantomWalletState()
+
+  try {
+    const address = await phantomWalletAdapter.connect(
+      options.onlyIfTrusted ? { onlyIfTrusted: true } : {},
+    )
+    if (!address) throw new Error('Phantom did not return a wallet address.')
+    rememberPhantomAutoConnect(true)
+    await syncConnectedPhantomWallet(address)
+  } catch (error) {
+    if (!silent) showToast(error.message ?? 'Phantom connection failed')
+    phantomWalletState = {
+      status: 'idle',
+      address: '',
+      unvBalance: null,
+      message: 'Connect Phantom to read your UNV staking balance.',
+    }
+    renderPhantomWalletState()
+  }
+}
+
+async function disconnectPhantomWallet() {
+  rememberPhantomAutoConnect(false)
+  try {
+    await phantomWalletAdapter?.disconnect()
+  } catch (error) {
+    showToast(error.message ?? 'Phantom disconnect failed')
+  }
+  phantomWalletState = {
+    status: 'idle',
+    address: '',
+    unvBalance: null,
+    message: 'Connect Phantom to read your UNV staking balance.',
+  }
+  renderPhantomWalletState()
+}
+
+async function syncConnectedPhantomWallet(address) {
+  phantomWalletState = {
+    status: 'loading-balance',
+    address,
+    unvBalance: null,
+    message: 'Reading UNV balance from Solana...',
+  }
+  renderPhantomWalletState()
+  await fetchPhantomUnvBalance(address)
+}
+
+async function fetchPhantomUnvBalance(address) {
+  const controller = new AbortController()
+  const timeout = window.setTimeout(() => controller.abort(), 8000)
+  try {
+    const url = new URL(UNV_WALLET_ENDPOINT, window.location.origin)
+    url.searchParams.set('owner', address)
+    url.searchParams.set('t', String(Date.now()))
+    const response = await fetch(url.toString(), {
+      headers: { accept: 'application/json' },
+      cache: 'no-store',
+      signal: controller.signal,
+    })
+    const payload = await response.json().catch(() => ({}))
+    if (!response.ok) throw new Error(payload.error ?? 'Unable to read wallet balance.')
+    const balance = Number(payload.balance ?? payload.uiAmountString)
+    const hasTokenAccount = Number(payload.tokenAccountCount ?? 0) > 0
+    phantomWalletState = {
+      status: 'connected',
+      address,
+      unvBalance: Number.isFinite(balance) ? balance : 0,
+      message: hasTokenAccount
+        ? 'UNV balance read from the connected Phantom wallet.'
+        : 'No UNV token account found in this Phantom wallet yet.',
+    }
+  } catch (error) {
+    phantomWalletState = {
+      status: 'connected',
+      address,
+      unvBalance: null,
+      message: error.name === 'AbortError'
+        ? 'Wallet balance request timed out.'
+        : error.message ?? 'Unable to read wallet balance.',
+    }
+  } finally {
+    window.clearTimeout(timeout)
+    renderPhantomWalletState()
+  }
+}
+
+function renderPhantomWalletState() {
+  const connected = Boolean(phantomWalletState.address)
+  const installed = phantomWalletAdapter?.installed
+  const busy = phantomWalletState.status === 'connecting' || phantomWalletState.status === 'loading-balance'
+  const buttonLabel = connected
+    ? `Phantom ${shortAddress(phantomWalletState.address, 4, 4)}`
+    : installed
+      ? 'Connect Phantom'
+      : 'Install Phantom'
+  const walletLabel = connected ? shortAddress(phantomWalletState.address, 5, 5) : 'No wallet connected'
+  const balanceLabel = connected && Number.isFinite(phantomWalletState.unvBalance)
+    ? formatUnvBalance(phantomWalletState.unvBalance)
+    : '-- UNV'
+  const statusLabel = connected
+    ? phantomWalletState.status === 'loading-balance'
+      ? 'Reading balance'
+      : 'Connected'
+    : installed
+      ? 'Not connected'
+      : 'Phantom missing'
+
+  document.querySelectorAll('[data-wallet-button]').forEach((button) => {
+    button.disabled = busy
+    button.classList.toggle('is-connected', connected)
+    button.textContent = busy ? 'Connecting...' : buttonLabel
+    button.setAttribute('aria-label', connected ? 'Disconnect Phantom wallet' : 'Connect Phantom wallet')
+  })
+  document.querySelectorAll('[data-wallet-status]').forEach((element) => {
+    element.textContent = statusLabel
+  })
+  document.querySelectorAll('[data-wallet-label]').forEach((element) => {
+    element.textContent = walletLabel
+    element.title = connected ? phantomWalletState.address : ''
+  })
+  document.querySelectorAll('[data-wallet-address]').forEach((element) => {
+    element.textContent = connected ? walletLabel : 'Connect Phantom first'
+    element.title = connected ? phantomWalletState.address : ''
+  })
+  document.querySelectorAll('[data-wallet-unv-balance]').forEach((element) => {
+    element.textContent = balanceLabel
+  })
+  document.querySelectorAll('[data-wallet-balance-status], [data-wallet-copy]').forEach((element) => {
+    if (element.matches('[data-wallet-balance-status]')) element.textContent = phantomWalletState.message
+    if (element.matches('[data-wallet-copy]')) {
+      element.disabled = !connected
+      element.dataset.copyValue = connected ? phantomWalletState.address : ''
+    }
+  })
+}
+
+function rememberPhantomAutoConnect(value) {
+  try {
+    if (value) localStorage.setItem(PHANTOM_AUTO_CONNECT_STORAGE_KEY, '1')
+    else localStorage.removeItem(PHANTOM_AUTO_CONNECT_STORAGE_KEY)
+  } catch {
+    // localStorage can be unavailable in private or embedded browser contexts.
+  }
+}
+
+function shouldRestorePhantomConnection() {
+  try {
+    return localStorage.getItem(PHANTOM_AUTO_CONNECT_STORAGE_KEY) === '1'
+  } catch {
+    return false
+  }
 }
 
 function updateSession(session) {
@@ -1714,6 +1980,7 @@ async function initializeAuth() {
   initializeOneTimeSecretModal()
   initializePaymentFlowModal()
   initializeHoldingsModal()
+  initializePhantomWallet()
 
   document.querySelectorAll('[data-copy-target]').forEach((button) => {
     button.addEventListener('click', async () => {
@@ -1726,6 +1993,12 @@ async function initializeAuth() {
   document.addEventListener('click', async (event) => {
     const target = event.target
     if (!(target instanceof Element)) return
+
+    const walletButton = target.closest('[data-wallet-button]')
+    if (walletButton) {
+      await togglePhantomWallet()
+      return
+    }
 
     const paymentFlowButton = target.closest('[data-payment-flow-open]')
     if (paymentFlowButton) {

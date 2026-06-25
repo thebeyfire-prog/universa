@@ -10,8 +10,8 @@
     <title>Universa Dashboard</title>
     <link rel="icon" href="/assets/universa-box-hands-logo.jpg" type="image/jpeg" />
     <link rel="apple-touch-icon" href="/assets/universa-box-hands-logo.jpg" />
-    <link rel="stylesheet" href="/styles.css?v=20260615-01" />
-    <script type="module" src="/app.js?v=20260615-01"></script>
+    <link rel="stylesheet" href="/styles.css?v=20260624-phantom" />
+    <script type="module" src="/app.js?v=20260624-phantom"></script>
   </head>
   <body class="dashboard-page">
     <main class="dashboard-main">
@@ -29,6 +29,13 @@
 
           <div class="dashboard-user">
             <span id="portal-identity">Checking session...</span>
+          </div>
+
+          <div class="dashboard-wallet-connector" aria-label="Connected staking wallet">
+            <span>Stake wallet</span>
+            <strong data-wallet-label>No wallet connected</strong>
+            <em data-wallet-balance-status>Connect Phantom to read your UNV staking balance.</em>
+            <button type="button" data-wallet-button>Connect Phantom</button>
           </div>
 
           <nav class="dashboard-nav" aria-label="Products">
@@ -66,6 +73,7 @@
           <div class="dashboard-mobile-top">
             <button class="dashboard-menu-button" type="button" data-dashboard-menu aria-label="Open navigation">☰</button>
             <a class="button button-light-outline" href="/">Back to site</a>
+            <button class="button button-light-outline wallet-connect-button" type="button" data-wallet-button>Connect Phantom</button>
           </div>
 
           <section class="dashboard-panel is-active" id="home" data-dashboard-panel="home">
@@ -227,6 +235,37 @@
                 </article>
               </div>
             </div>
+
+            <article class="rewards-card wallet-stake-card">
+              <div class="rewards-card-heading">
+                <div>
+                  <p class="portal-label">Connected stake wallet</p>
+                  <h2>Phantom staking balance</h2>
+                </div>
+                <span data-wallet-status>Not connected</span>
+              </div>
+              <div class="reward-wallet-display">
+                <span>Wallet address</span>
+                <code data-wallet-address>Connect Phantom first</code>
+                <div>
+                  <button type="button" data-wallet-button>Connect Phantom</button>
+                  <button
+                    type="button"
+                    data-wallet-copy
+                    data-copy-value=""
+                    data-copy-label="Wallet address copied"
+                    disabled
+                  >
+                    Copy address
+                  </button>
+                </div>
+              </div>
+              <div class="wallet-stake-balance">
+                <span>UNV balance</span>
+                <strong data-wallet-unv-balance>-- UNV</strong>
+                <p data-wallet-balance-status>Connect Phantom to read your UNV staking balance.</p>
+              </div>
+            </article>
 
             <div class="rewards-layout">
               <article class="rewards-card reward-wallet-card">

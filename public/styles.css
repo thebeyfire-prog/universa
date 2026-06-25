@@ -122,6 +122,7 @@ button {
 
 .header-actions {
   justify-content: flex-end;
+  gap: 12px;
 }
 
 .handle-link {
@@ -175,6 +176,15 @@ button {
   width: 18px;
   height: 18px;
   flex: 0 0 auto;
+}
+
+.wallet-connect-button {
+  white-space: nowrap;
+}
+
+.wallet-connect-button.is-connected {
+  background: var(--sky);
+  color: var(--ink);
 }
 
 .button-light {
@@ -1294,6 +1304,72 @@ button {
   color: var(--ink-soft);
 }
 
+.staking-wallet-card {
+  margin: 34px 0 28px;
+  padding: 22px;
+  border: 1px solid rgba(7, 20, 15, 0.12);
+  border-radius: 26px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) auto minmax(220px, 0.8fr);
+  gap: 18px;
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(223, 244, 255, 0.58)),
+    rgba(255, 255, 255, 0.76);
+  box-shadow: 0 18px 50px rgba(17, 36, 29, 0.08);
+}
+
+.staking-wallet-card span,
+.staking-wallet-stat span {
+  display: block;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.staking-wallet-card strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: clamp(24px, 3vw, 42px);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+  overflow-wrap: anywhere;
+}
+
+.staking-wallet-card p,
+.staking-wallet-stat em {
+  display: block;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 750;
+  line-height: 1.42;
+}
+
+.staking-wallet-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.staking-wallet-stat {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(7, 20, 15, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.staking-wallet-stat strong {
+  font-size: clamp(26px, 3.2vw, 46px);
+}
+
 .vault-live-panel {
   margin-top: 28px;
   display: grid;
@@ -1906,6 +1982,56 @@ html[data-dashboard-theme="dark"] .dashboard-page .button-light-outline {
 
 .dashboard-user #portal-identity {
   color: #07140f;
+}
+
+.dashboard-wallet-connector {
+  margin-top: -12px;
+  padding: 14px;
+  border: 1px solid rgba(7, 20, 15, 0.1);
+  border-radius: 18px;
+  display: grid;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.dashboard-wallet-connector span {
+  color: rgba(7, 20, 15, 0.48);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dashboard-wallet-connector strong {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-wallet-connector em {
+  color: rgba(7, 20, 15, 0.58);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.dashboard-wallet-connector button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--white);
+  font-weight: 950;
+}
+
+.dashboard-wallet-connector button.is-connected {
+  background: var(--sky);
+  color: var(--ink);
 }
 
 .dashboard-nav {
@@ -3987,6 +4113,52 @@ body.modal-open {
   padding-bottom: 34px;
 }
 
+.wallet-stake-card {
+  grid-column: 1 / -1;
+}
+
+.wallet-stake-card .rewards-card-heading h2 {
+  max-width: 14ch;
+}
+
+.wallet-stake-card .reward-wallet-display {
+  max-width: 760px;
+}
+
+.wallet-stake-balance {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(7, 20, 15, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.wallet-stake-balance span {
+  color: rgba(7, 20, 15, 0.52);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wallet-stake-balance strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: clamp(28px, 3.4vw, 46px);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.wallet-stake-balance p {
+  margin: 10px 0 0;
+  color: rgba(7, 20, 15, 0.58);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
 .reward-wallet-card .rewards-card-heading {
   gap: 10px;
 }
@@ -5691,6 +5863,15 @@ body.modal-open {
     grid-column: auto;
   }
 
+  .staking-wallet-card {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .staking-wallet-actions {
+    justify-content: flex-start;
+  }
+
   .vault-live-panel {
     grid-template-columns: 1fr;
   }
@@ -6147,6 +6328,7 @@ body.modal-open {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    flex-wrap: wrap;
   }
 
   .dashboard-menu-button {
@@ -6167,6 +6349,10 @@ body.modal-open {
     padding-inline: 18px;
     flex: 0 1 auto;
     white-space: nowrap;
+  }
+
+  .dashboard-mobile-top .wallet-connect-button {
+    flex: 1 1 100%;
   }
 
   .payment-flow-actions {
@@ -6660,6 +6846,7 @@ html[data-dashboard-theme="dark"] .dashboard-sidebar-quicklinks p {
 }
 
 html[data-dashboard-theme="dark"] .dashboard-panel-header p:not(.portal-label),
+html[data-dashboard-theme="dark"] .dashboard-wallet-connector em,
 html[data-dashboard-theme="dark"] .api-key-manager-header p:not(.portal-label),
 html[data-dashboard-theme="dark"] .kyc-status-card p:not(.portal-label),
 html[data-dashboard-theme="dark"] .developer-control-copy p:not(.portal-label),
@@ -6672,6 +6859,7 @@ html[data-dashboard-theme="dark"] .api-auth-card p,
 html[data-dashboard-theme="dark"] .api-doc-card p,
 html[data-dashboard-theme="dark"] .fee-console-card p,
 html[data-dashboard-theme="dark"] .rewards-card > p,
+html[data-dashboard-theme="dark"] .wallet-stake-balance p,
 html[data-dashboard-theme="dark"] .reward-allocation-row p,
 html[data-dashboard-theme="dark"] .reward-claim-row p,
 html[data-dashboard-theme="dark"] .webhook-endpoint-form p,
@@ -6687,6 +6875,8 @@ html[data-dashboard-theme="dark"] .payment-flow-guide li {
 }
 
 html[data-dashboard-theme="dark"] .dashboard-page .portal-label,
+html[data-dashboard-theme="dark"] .dashboard-wallet-connector span,
+html[data-dashboard-theme="dark"] .wallet-stake-balance span,
 html[data-dashboard-theme="dark"] .api-doc-card dt,
 html[data-dashboard-theme="dark"] .developer-control-steps b,
 html[data-dashboard-theme="dark"] .dashboard-steps b,
@@ -6696,6 +6886,7 @@ html[data-dashboard-theme="dark"] .payment-flow-guide span {
 
 html[data-dashboard-theme="dark"] :is(
   .dashboard-action-secondary,
+  .dashboard-wallet-connector,
   .dashboard-metric-grid article,
   .developer-control-card,
   .dashboard-task,
@@ -6710,6 +6901,7 @@ html[data-dashboard-theme="dark"] :is(
   .rewards-hero,
   .rewards-summary-grid article,
   .rewards-card,
+  .wallet-stake-balance,
   .reward-allocation-row,
   .reward-claim-row,
   .webhook-endpoint-form,
@@ -6745,6 +6937,7 @@ html[data-dashboard-theme="dark"] .api-key-row.customer-row.is-selected {
 
 html[data-dashboard-theme="dark"] :is(
   .dashboard-action-secondary,
+  .dashboard-wallet-connector button,
   .developer-control-actions button,
   .dashboard-task button,
   .reward-wallet-display button,
@@ -6768,6 +6961,7 @@ html[data-dashboard-theme="dark"] :is(
 
 html[data-dashboard-theme="dark"] :is(
   .developer-control-actions button:first-child,
+  .dashboard-wallet-connector button,
   .dashboard-task button,
   .reward-wallet-display button,
   .reward-wallet-form button,
@@ -6916,6 +7110,7 @@ html[data-dashboard-theme="dark"] :is(
 }
 
 html[data-dashboard-theme="dark"] .api-doc-card dd,
+html[data-dashboard-theme="dark"] .dashboard-wallet-connector strong,
 html[data-dashboard-theme="dark"] .dashboard-metric-grid strong,
 html[data-dashboard-theme="dark"] .developer-control-copy h2,
 html[data-dashboard-theme="dark"] .developer-control-steps strong,
@@ -6930,6 +7125,7 @@ html[data-dashboard-theme="dark"] .api-doc-card h2,
 html[data-dashboard-theme="dark"] .fee-console-card h2,
 html[data-dashboard-theme="dark"] .rewards-summary-grid strong,
 html[data-dashboard-theme="dark"] .rewards-card-heading h2,
+html[data-dashboard-theme="dark"] .wallet-stake-balance strong,
 html[data-dashboard-theme="dark"] .reward-allocation-row h3,
 html[data-dashboard-theme="dark"] .reward-claim-row h3,
 html[data-dashboard-theme="dark"] .dashboard-empty-row strong,

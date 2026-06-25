@@ -34,8 +34,8 @@
     <title>Universa | Fiat and stablecoin rails for developers</title>
     <link rel="icon" href="/assets/universa-box-hands-logo.jpg" type="image/jpeg" />
     <link rel="apple-touch-icon" href="/assets/universa-box-hands-logo.jpg" />
-    <link rel="stylesheet" href="/styles.css?v=20260613-63" />
-    <script type="module" src="/app.js?v=20260613-63"></script>
+    <link rel="stylesheet" href="/styles.css?v=20260624-phantom" />
+    <script type="module" src="/app.js?v=20260624-phantom"></script>
   </head>
   <body>
     <header class="site-header" aria-label="Universa navigation">
@@ -51,6 +51,7 @@
       </nav>
       <div class="header-actions">
         <a class="handle-link" href="https://x.com/UniversaRails" rel="noreferrer">@UniversaRails</a>
+        <button class="button button-light wallet-connect-button" type="button" data-wallet-button>Connect Phantom</button>
         <button class="button button-dark google-auth-button header-auth" data-auth-button>Sign in with Google</button>
       </div>
     </header>
@@ -70,6 +71,7 @@
           </p>
           <div class="hero-actions reveal">
             <button class="button button-dark google-auth-button" data-auth-button>Sign in with Google</button>
+            <button class="button button-light wallet-connect-button" type="button" data-wallet-button>Connect Phantom</button>
             <a class="button button-light" href="#quote">Try the quote</a>
           </div>
           <p class="rotating-line" id="rotating-line" aria-live="polite">
@@ -533,6 +535,36 @@
             >
               Open contract repo
             </a>
+          </div>
+
+          <div class="staking-wallet-card reveal" aria-label="UNV staking wallet connection">
+            <div>
+              <span>Staking wallet</span>
+              <strong data-wallet-label>No wallet connected</strong>
+              <p>
+                Connect Phantom to read the Solana wallet balance used for UNV
+                staking eligibility. Google signs you into the developer
+                dashboard; Phantom proves the wallet side.
+              </p>
+            </div>
+            <div class="staking-wallet-actions">
+              <button class="button button-dark wallet-connect-button" type="button" data-wallet-button>Connect Phantom</button>
+              <button
+                class="button button-light"
+                type="button"
+                data-wallet-copy
+                data-copy-value=""
+                data-copy-label="Wallet address copied"
+                disabled
+              >
+                Copy wallet
+              </button>
+            </div>
+            <div class="staking-wallet-stat">
+              <span>UNV balance</span>
+              <strong data-wallet-unv-balance>-- UNV</strong>
+              <em data-wallet-balance-status>Connect Phantom to read your UNV staking balance.</em>
+            </div>
           </div>
 
           <div class="token-grid">
